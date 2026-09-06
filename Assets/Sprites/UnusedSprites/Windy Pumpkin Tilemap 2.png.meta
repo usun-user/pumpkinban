@@ -1,0 +1,617 @@
+fileFormatVersion: 2
+guid: 99e4403c52ecd334994816aad0b02307
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 200
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 900
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4378d9437ce16ad4d87b2155b8d9977c
+      internalID: -635767543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_1
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 900
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 91bd4ed01d8c45d43ad25528a5e90883
+      internalID: 251870625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_2
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 900
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ca012d8efd463849b1a1fd65009eddb
+      internalID: -1282422378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_3
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 900
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: b1741a44f41677d41a632876fce726be
+      internalID: 759041394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 600
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85cd8c7a384a13044b7861fafed55f5a
+      internalID: 156490848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_5
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 600
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d24fbbcaa95c3240bc110c12aaadcc2
+      internalID: -848945823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_6
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 600
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: a76236219f6be88418549586ab281a70
+      internalID: 1305474124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_7
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 600
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1814f05623b519e438d1f4a3343a53e4
+      internalID: -1197658317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 300
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: c20632ca8e76cc24eb67f5415ed9ba99
+      internalID: 236150743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_9
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 300
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 87f7f2647c8176a4c8e860f30f210c63
+      internalID: -395553373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_10
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 300
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5fd87b82b86c3842a804ed513d4fffa
+      internalID: 2120068069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_11
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 300
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 461f29f8e9153bd4ca76fc54112b8171
+      internalID: -1516930105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: aaaf3177e977ce84aafee9c918f9ec24
+      internalID: 529306351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_13
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 0
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95736c04fb847814aade2c029200cc93
+      internalID: -155503919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_14
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 0
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: edd2c1902dd83e742bb8afd9a80302d8
+      internalID: -1290910412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Windy Pumpkin Tilemap 2_15
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 0
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 150, y: 150}
+        - {x: -150, y: 150}
+        - {x: -150, y: -150}
+        - {x: -150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+        - {x: 150, y: -150}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2665e86c3c1e19c4d86fc611b9743baf
+      internalID: 375475795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      Windy Pumpkin Tilemap 2_0: -635767543
+      Windy Pumpkin Tilemap 2_1: 251870625
+      Windy Pumpkin Tilemap 2_10: 2120068069
+      Windy Pumpkin Tilemap 2_11: -1516930105
+      Windy Pumpkin Tilemap 2_12: 529306351
+      Windy Pumpkin Tilemap 2_13: -155503919
+      Windy Pumpkin Tilemap 2_14: -1290910412
+      Windy Pumpkin Tilemap 2_15: 375475795
+      Windy Pumpkin Tilemap 2_2: -1282422378
+      Windy Pumpkin Tilemap 2_3: 759041394
+      Windy Pumpkin Tilemap 2_4: 156490848
+      Windy Pumpkin Tilemap 2_5: -848945823
+      Windy Pumpkin Tilemap 2_6: 1305474124
+      Windy Pumpkin Tilemap 2_7: -1197658317
+      Windy Pumpkin Tilemap 2_8: 236150743
+      Windy Pumpkin Tilemap 2_9: -395553373
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
