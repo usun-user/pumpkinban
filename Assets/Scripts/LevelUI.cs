@@ -22,14 +22,13 @@ public class LevelUI : MonoBehaviour
     PlayerManager playerScript;
     UndoManager undoScript;
     
-    public bool movedAfterUndo, isPlaying = true;
+    public bool movedAfterUndo, died, won, isPlaying = true;
     public int currentScore;
     public float currentTime = 0f;
-
-    public bool died, won;
     public string sceneName;
 
     int levelIndex;
+    bool hasChangedSettings;
 
     void Start()
     {
@@ -78,6 +77,8 @@ public class LevelUI : MonoBehaviour
 
         playerScript = player.GetComponent<PlayerManager>();
         undoScript = undoManager.GetComponent<UndoManager>();
+
+        hasChangedSettings = false;
     }
 
     void Update()
@@ -195,7 +196,7 @@ public class LevelUI : MonoBehaviour
         {
             DataManager.Instance.timeAnyArr[levelIndex] = currentTime;
         }
-        DataManager.Instance.SaveGame();
+        DataManager.Instance.SaveLevel();
         originalPanel.SetActive(false);
         deathPanel.SetActive(false);
         winPanel.SetActive(true);
@@ -257,6 +258,12 @@ public class LevelUI : MonoBehaviour
         {
             yellowVignetteObj.SetActive(true);
         }
+
+        if (hasChangedSettings)
+        {
+            hasChangedSettings = false;
+            DataManager.Instance.SaveSettings();
+        }
     }
 
     public void RestartGame()
@@ -293,12 +300,15 @@ public class LevelUI : MonoBehaviour
     public void ToggleRestartConfirmSettings()
     {
         DataManager.Instance.doNotShowConfirm = !DataManager.Instance.doNotShowConfirm;
+        hasChangedSettings = true;
     }
 
     public void ToggleDoNotShowConfirm()
     {
         DataManager.Instance.doNotShowConfirm = !DataManager.Instance.doNotShowConfirm;
         restartConfirmSettingsToggle.SetIsOnWithoutNotify(!restartConfirmSettingsToggle.isOn);
+        //hasChangedSettings = true;
+        DataManager.Instance.SaveRestartConfirm();
     }
 
     public void GoHome()
@@ -324,15 +334,6 @@ public class LevelUI : MonoBehaviour
         }
     }
 
-    /*
-    IEnumerator SceneChange(string newScene)
-    {
-        yield return new WaitForSeconds(buttonSound.length);
-        GameManager.Instance.SwitchScene(newScene);
-        //SceneManager.LoadScene(newScene);
-    }
-    */
-
     public void ToggleTimer()
     {
         persistentSoundSource.PlayOneShot(buttonSound);
@@ -356,6 +357,7 @@ public class LevelUI : MonoBehaviour
             timerButton.GetComponent<Image>().sprite = timerOnSprite;
             DataManager.Instance.isTimer = true;
         }
+        hasChangedSettings = true;
     }
 
     public void ToggleSoundEffects()
@@ -373,6 +375,7 @@ public class LevelUI : MonoBehaviour
             nonpersistentSoundSource.mute = true;
             DataManager.Instance.isSoundMute = true;
         }
+        hasChangedSettings = true;
     }
 
     public void ToggleMusic()
@@ -390,6 +393,7 @@ public class LevelUI : MonoBehaviour
             mainMenuMusicSource.mute = true;
             DataManager.Instance.isMusicMute = true;
         }
+        hasChangedSettings = true;
     }
 
     public void OnSoundSliderChanged()
@@ -397,6 +401,7 @@ public class LevelUI : MonoBehaviour
         persistentSoundSource.volume = soundSlider.value;
         nonpersistentSoundSource.volume = soundSlider.value;
         DataManager.Instance.soundVolume = soundSlider.value;
+        hasChangedSettings = true;
     }
 
     public void OnMusicSliderChanged()
@@ -404,6 +409,7 @@ public class LevelUI : MonoBehaviour
         mainMenuMusicSource.volume = musicSlider.value;
         levelMusicSource.volume = musicSlider.value;
         DataManager.Instance.musicVolume = musicSlider.value;
+        hasChangedSettings = true;
     }
 
     public void ToggleMobileMode()
@@ -418,5 +424,6 @@ public class LevelUI : MonoBehaviour
         {
             mobileButton.GetComponent<Image>().sprite = mobileOffSprite;
         }
+        hasChangedSettings = true;
     }
 }

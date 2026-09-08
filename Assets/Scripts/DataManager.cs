@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 
 public class DataManager : MonoBehaviour
@@ -11,9 +12,13 @@ public class DataManager : MonoBehaviour
     public int numberOfLevels;
 
     public bool isTimer, isMusicMute, isSoundMute, isOnMobile, doNotShowConfirm;
-    public float musicVolume, soundVolume, levelSelectPos;
+    public float musicVolume, soundVolume; //levelSelectPos
     public int[] scoreArr;
     public float[] timeAnyArr, timeHundredArr;
+
+    //[SerializeField] Sprite[] hatSprites, faceSprites, bodySprites;
+    //[SerializeField] Toggle[] hatToggles, faceToggles, bodyToggles;
+    //int hatIndex, faceIndex, bodyIndex; // 0 means null sprite (no accessory)
 
     private void Awake()
     {
@@ -34,7 +39,11 @@ public class DataManager : MonoBehaviour
             doNotShowConfirm = (PlayerPrefs.GetInt("doNotShowConfirm") == 1);
             musicVolume = PlayerPrefs.GetFloat("musicVolume");
             soundVolume = PlayerPrefs.GetFloat("soundVolume");
-            levelSelectPos = PlayerPrefs.GetFloat("levelSelectPos");
+            //levelSelectPos = PlayerPrefs.GetFloat("levelSelectPos");
+
+            //hatIndex = PlayerPrefs.GetInt("hatIndex");
+            //faceIndex = PlayerPrefs.GetInt("faceIndex");
+            //bodyIndex = PlayerPrefs.GetInt("bodyIndex");
         } else
         {
             PlayerPrefs.SetInt("isTimer", 0);
@@ -63,8 +72,9 @@ public class DataManager : MonoBehaviour
         PlayerPrefs.Save();
     }
     
-    public void SaveGame()
+    public void SaveLevel()
     {
+        /*
         PlayerPrefs.SetInt("isTimer", Convert.ToInt32(isTimer));
         PlayerPrefs.SetInt("isMusicMute", Convert.ToInt32(isMusicMute));
         PlayerPrefs.SetInt("isSoundMute", Convert.ToInt32(isSoundMute));
@@ -72,7 +82,8 @@ public class DataManager : MonoBehaviour
         PlayerPrefs.SetInt("doNotShowConfirm", Convert.ToInt32(doNotShowConfirm));
         PlayerPrefs.SetFloat("musicVolume", musicVolume);
         PlayerPrefs.SetFloat("soundVolume", soundVolume);
-        PlayerPrefs.SetFloat("levelSelectPos", levelSelectPos);
+        */
+        //PlayerPrefs.SetFloat("levelSelectPos", levelSelectPos);
         for (int i = 0; i < numberOfLevels; i++)
         {
             string levelIndex = i.ToString();
@@ -81,6 +92,115 @@ public class DataManager : MonoBehaviour
             PlayerPrefs.SetFloat("timeHundred" + levelIndex, timeHundredArr[i]);
         }
         PlayerPrefs.Save();
+    }
+
+    public CosmeticSprites GetCosmeticSprites()
+    {
+        return new CosmeticSprites
+        {
+            newHatIndex = PlayerPrefs.GetInt("hatIndex"),
+            newFaceIndex = PlayerPrefs.GetInt("faceIndex"),
+            newBodyIndex = PlayerPrefs.GetInt("bodyIndex")
+        };
+    }
+
+    /*
+    public CosmeticSprites GetCosmeticSprites()
+    {
+        return new CosmeticSprites
+        {
+            hat = hatSprites[hatIndex],
+            face = faceSprites[faceIndex],
+            body = bodySprites[bodyIndex],
+            hatToggle = hatToggles[hatIndex], 
+            faceToggle = faceToggles[faceIndex],
+            bodyToggle = bodyToggles[bodyIndex]
+        };
+    }
+
+    public void SaveCosmetics(Sprite hatSprite, Sprite faceSprite, Sprite bodySprite)
+    {
+        if (hatSprite == null)
+        {
+            hatIndex = 0;
+        } else
+        {
+            hatIndex = System.Array.IndexOf(hatSprites, hatSprite);
+        }
+
+        if (faceSprite == null)
+        {
+            faceIndex = 0;
+        }
+        else
+        {
+            faceIndex = System.Array.IndexOf(faceSprites, faceSprite);
+        }
+
+        if (bodySprite == null)
+        {
+            bodyIndex = 0;
+        }
+        else
+        {
+            bodyIndex = System.Array.IndexOf(bodySprites, bodySprite);
+        }
+
+        PlayerPrefs.SetInt("hatIndex", hatIndex);
+        PlayerPrefs.SetInt("faceIndex", faceIndex);
+        PlayerPrefs.SetInt("bodyIndex", bodyIndex);
+
+        PlayerPrefs.Save();
+    }
+    */
+
+    public void SaveCosmetics(int newHatIndex, int newFaceIndex, int newBodyIndex)
+    {
+        //hatIndex = newHatIndex;
+        //faceIndex = newFaceIndex;
+        //bodyIndex = newBodyIndex;
+
+        PlayerPrefs.SetInt("hatIndex", newHatIndex);
+        PlayerPrefs.SetInt("faceIndex", newFaceIndex);
+        PlayerPrefs.SetInt("bodyIndex", newBodyIndex);
+
+        PlayerPrefs.Save();
+    }
+
+    public void SaveSettings()
+    {
+        PlayerPrefs.SetInt("isTimer", Convert.ToInt32(isTimer));
+        PlayerPrefs.SetInt("isMusicMute", Convert.ToInt32(isMusicMute));
+        PlayerPrefs.SetInt("isSoundMute", Convert.ToInt32(isSoundMute));
+        PlayerPrefs.SetInt("isOnMobile", Convert.ToInt32(isOnMobile));//
+        PlayerPrefs.SetInt("doNotShowConfirm", Convert.ToInt32(doNotShowConfirm));
+        PlayerPrefs.SetFloat("musicVolume", musicVolume);
+        PlayerPrefs.SetFloat("soundVolume", soundVolume);
+
+        PlayerPrefs.Save();
+    }
+
+    public void SaveLevelSelectPos(float levelSelectPos)
+    {
+        PlayerPrefs.SetFloat("levelSelectPos", levelSelectPos);
+        PlayerPrefs.Save();
+    }
+
+    public void SaveMobileState()
+    {
+        PlayerPrefs.SetInt("isOnMobile", Convert.ToInt32(isOnMobile));
+        PlayerPrefs.Save();
+    }
+
+    public void SaveRestartConfirm()
+    {
+        PlayerPrefs.SetInt("doNotShowConfirm", Convert.ToInt32(doNotShowConfirm));
+        PlayerPrefs.Save();
+    }
+
+    public float GetLevelSelectPos()
+    {
+        return PlayerPrefs.GetFloat("levelSelectPos");
     }
 
     /*
@@ -94,3 +214,16 @@ public class DataManager : MonoBehaviour
     }
     */
 }
+
+public class CosmeticSprites
+{
+    public int newHatIndex, newFaceIndex, newBodyIndex;
+}
+
+/*
+public class CosmeticSprites
+{
+    public Sprite hat, face, body;
+    public Toggle hatToggle, faceToggle, bodyToggle;
+}
+*/

@@ -3844,7 +3844,6 @@ MonoBehaviour:
   hat: {fileID: 1581716527}
   face: {fileID: 603154627}
   body: {fileID: 563986668}
-  skin: {fileID: 182938883}
 --- !u!4 &587733662
 Transform:
   m_ObjectHideFlags: 0
@@ -4139,7 +4138,6 @@ MonoBehaviour:
   doNotShowConfirm: 0
   musicVolume: 0.5
   soundVolume: 0.5
-  levelSelectPos: 0
   scoreArr: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
   timeAnyArr:
   - 3599
@@ -4163,6 +4161,16 @@ MonoBehaviour:
   - 3599
   - 3599
   - 3599
+  hatSprites:
+  - {fileID: 0}
+  - {fileID: 0}
+  faceSprites: []
+  bodySprites: []
+  hatToggles:
+  - {fileID: 0}
+  - {fileID: 0}
+  faceToggles: []
+  bodyToggles: []
 --- !u!4 &645572302
 Transform:
   m_ObjectHideFlags: 0

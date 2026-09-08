@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     public CameraFollow cameraFollowScript;
     public UndoManager undoScript;
 
-    public SpriteRenderer hat, face, body, skin;
+    public SpriteRenderer hat, face, body;
 
     private void Awake()
     {

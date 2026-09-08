@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using System;
@@ -9,19 +8,19 @@ using System;
 
 public class MainMenuUI : MonoBehaviour
 {
-    [SerializeField] GameObject originalPanel, settingsPanel, levelPanel, cosmeticsPanel, cosmeticSectionPanel, hatPanel, facePanel, bodyPanel, skinPanel, soundButton, musicButton, timerButton, quitButton, mainMenuBG; //infoPanel
+    [SerializeField] GameObject currentPanel, currentSubPanel, settingsPanel, levelPanel, cosmeticPanel, soundButton, musicButton, timerButton, quitButton, mainMenuBG;
     [SerializeField] TextMeshProUGUI[] scoreTextArr, timerAnyTextArr, timerHundredTextArr;
     [SerializeField] TextMeshProUGUI timerToggleText, mobileToggleText;
-    [SerializeField] Sprite soundOnSprite, soundOffSprite, musicOnSprite, musicOffSprite, timerOnSprite, timerOffSprite, normalPlayerSkin, selectedButtonSprite, unselectedButtonSprite;
+    [SerializeField] Sprite soundOnSprite, soundOffSprite, musicOnSprite, musicOffSprite, timerOnSprite, timerOffSprite;
     [SerializeField] AudioClip buttonSound;
     [SerializeField] Slider soundSlider, musicSlider;
     [SerializeField] ScrollRect levelSelectScrollRect;
     [SerializeField] Toggle restartConfirmSettingsToggle;
-    [SerializeField] Image hat, face, body, skin;
+    [SerializeField] CosmeticManager cosmeticScript;
 
     AudioSource persistentSoundSource, nonpersistentSoundSource, mainMenuMusicSource, levelMusicSource;
-
-    //public float currentTime = 0f;
+    GameObject previousPanel, previousSubPanel;
+    bool hasChangedSettings;
 
     void Start()
     {
@@ -71,7 +70,6 @@ public class MainMenuUI : MonoBehaviour
         for (int i = 0; i < DataManager.Instance.numberOfLevels; i++)
         {
             scoreTextArr[i].text = DataManager.Instance.scoreArr[i].ToString() + "/5";
-            //timerTextArr[i].text = TimeSpan.FromSeconds(DataManager.Instance.timeArr[i]).ToString(@"mm\:ss\.ff");
 
             TimeSpan time = TimeSpan.FromSeconds(DataManager.Instance.timeAnyArr[i]);
             if (time.TotalMinutes >= 1)
@@ -106,12 +104,14 @@ public class MainMenuUI : MonoBehaviour
             DataManager.Instance.isOnMobile = true;
         }
 
-        levelSelectScrollRect.horizontalNormalizedPosition = DataManager.Instance.levelSelectPos;
+        levelSelectScrollRect.horizontalNormalizedPosition = DataManager.Instance.GetLevelSelectPos();
 
         if (GameManager.Instance.isLevelSelect)
         {
-            StartLevelSelect();
+            ChangePanel(levelPanel);
         }
+
+        hasChangedSettings = false;
     }
 
     void Update()
@@ -120,11 +120,11 @@ public class MainMenuUI : MonoBehaviour
         {
             if (settingsPanel.activeSelf)
             {
-                ReturnToGame();
+                ReturnToPreviousPanel();
             }
             else
             {
-                ToggleSettingsPanel();
+                ChangePanel(settingsPanel);
             }
         }
 
@@ -140,206 +140,73 @@ public class MainMenuUI : MonoBehaviour
         }
     }
 
-    public void ToggleSettingsPanel()
+    public void ChangePanel(GameObject newPanel)
     {
-        persistentSoundSource.PlayOneShot(buttonSound);
-        mainMenuBG.SetActive(true);
-        originalPanel.SetActive(false);
-        //infoPanel.SetActive(false);
-        settingsPanel.SetActive(true);
-        levelPanel.SetActive(false);
-        cosmeticsPanel.SetActive(false);
-    }
-
-    /*
-    public void ToggleInfoPanel()
-    {
-        persistentSoundSource.PlayOneShot(buttonSound);
-        originalPanel.SetActive(false);
-        infoPanel.SetActive(true);
-        settingsPanel.SetActive(false);
-        levelPanel.SetActive(false);
-        cosmeticsPanel.SetActive(false);
-    }
-    */
-
-    public void ToggleCosmeticsPanel()
-    {
-        persistentSoundSource.PlayOneShot(buttonSound);
-        mainMenuBG.SetActive(true);
-        originalPanel.SetActive(false);
-        //infoPanel.SetActive(false);
-        settingsPanel.SetActive(false);
-        levelPanel.SetActive(false);
-        cosmeticsPanel.SetActive(true);
-        cosmeticSectionPanel.SetActive(true);
-    }
-
-    public void ToggleHatPanel()
-    {
-        persistentSoundSource.PlayOneShot(buttonSound);
-        cosmeticSectionPanel.SetActive(false);
-        hatPanel.SetActive(true);
-    }
-
-    public void ToggleFacePanel()
-    {
-        persistentSoundSource.PlayOneShot(buttonSound);
-        cosmeticSectionPanel.SetActive(false);
-        facePanel.SetActive(true);
-    }
-
-    public void ToggleBodyPanel()
-    {
-        persistentSoundSource.PlayOneShot(buttonSound);
-        cosmeticSectionPanel.SetActive(false);
-        bodyPanel.SetActive(true);
-    }
-
-    public void ToggleSkinPanel()
-    {
-        persistentSoundSource.PlayOneShot(buttonSound);
-        cosmeticSectionPanel.SetActive(false);
-        skinPanel.SetActive(true);
-    }
-
-    public void ChangeCosmeticItem(Sprite newCosmeticItem)
-    {
-        if (hatPanel.activeSelf)
+        currentPanel.SetActive(false);
+        if (newPanel == levelPanel)
         {
-            if (hat.sprite == newCosmeticItem)
+            if (!GameManager.Instance.isLevelSelect)
             {
-                hat.enabled = false;
-                GameManager.Instance.hat.enabled = false;
-            } 
-            else
-            {
-                hat.sprite = newCosmeticItem;
-                hat.enabled = true;
-                GameManager.Instance.hat.sprite = newCosmeticItem;
+                persistentSoundSource.PlayOneShot(buttonSound);
             }
-        } 
-        else if (facePanel.activeSelf)
+            mainMenuBG.SetActive(false);
+        } else
         {
-            if (face.sprite == newCosmeticItem)
+            persistentSoundSource.PlayOneShot(buttonSound);
+            if (!mainMenuBG.activeSelf)
             {
-                face.enabled = false;
-                GameManager.Instance.face.enabled = false;
-            }
-            else
-            {
-                face.sprite = newCosmeticItem;
-                face.enabled = true;
-                GameManager.Instance.face.sprite = newCosmeticItem;
+                mainMenuBG.SetActive(true);
             }
         }
-        else if (bodyPanel.activeSelf)
-        {
-            if (body.sprite == newCosmeticItem)
-            {
-                body.enabled = false;
-                GameManager.Instance.body.enabled = false;
-            }
-            else
-            {
-                body.sprite = newCosmeticItem;
-                body.enabled = true;
-                GameManager.Instance.body.sprite = newCosmeticItem;
-            }
-        }
-        else if(skinPanel.activeSelf)
-        {
-            if (skin.sprite == newCosmeticItem)
-            {
-                skin.sprite = normalPlayerSkin;
-                GameManager.Instance.skin.sprite = normalPlayerSkin;
-            }
-            else
-            {
-                skin.sprite = newCosmeticItem;
-                GameManager.Instance.skin.sprite = newCosmeticItem;
-            }
-        }
+        previousPanel = currentPanel;
+        currentPanel = newPanel;
+        newPanel.SetActive(true);
     }
 
-    public void ClearAllCosmetics()
+    public void ChangeSubPanel(GameObject newSubPanel)
     {
-        hat.enabled = false;
-        GameManager.Instance.hat.enabled = false;
-        face.enabled = false;
-        GameManager.Instance.face.enabled = false;
-        body.enabled = false;
-        GameManager.Instance.body.enabled = false;
-        skin.sprite = normalPlayerSkin;
+        currentSubPanel.SetActive(false);
+        persistentSoundSource.PlayOneShot(buttonSound);
+        previousSubPanel = currentSubPanel;
+        currentSubPanel = newSubPanel;
+        newSubPanel.SetActive(true);
     }
 
-    /*
-    public void ToggleLevelPanel()
+    public void ReturnToPreviousPanel()
     {
-        soundSource.PlayOneShot(buttonSound);
-        levelPanel.SetActive(true);
-        originalPanel.SetActive(false);
-        infoPanel.SetActive(false);
-        settingsPanel.SetActive(false);
-    }
-    */
-    /*
-    public void ReturnToSettings()
-    {
+        currentPanel.SetActive(false);
         persistentSoundSource.PlayOneShot(buttonSound);
-        //infoPanel.SetActive(false);
-        settingsPanel.SetActive(true);
+        if (currentPanel == levelPanel)
+        {
+            mainMenuBG.SetActive(true);
+        } else if ((currentPanel == settingsPanel) && hasChangedSettings)
+        {
+            hasChangedSettings = false;
+            DataManager.Instance.SaveSettings();
+            //DataManager.Instance.SaveMobileState();
+        } else if ((currentPanel == cosmeticPanel) && cosmeticScript.hasChangedCosmetics)
+        {
+            cosmeticScript.SaveCurrentCosmetics();
+        }
+        currentPanel = previousPanel;
+        previousPanel.SetActive(true);
     }
-    */
-    public void ReturnToGame()
+
+    public void ReturnToPreviousSubPanel()
     {
+        currentSubPanel.SetActive(false);
         persistentSoundSource.PlayOneShot(buttonSound);
-        mainMenuBG.SetActive(true);
-        settingsPanel.SetActive(false);
-        //infoPanel.SetActive(false);
-        originalPanel.SetActive(true);
-        levelPanel.SetActive(false);
-        cosmeticsPanel.SetActive(false);
+        currentSubPanel = previousSubPanel;
+        previousSubPanel.SetActive(true);
     }
 
     public void PlayLevel(string levelName)
     {
-        DataManager.Instance.levelSelectPos = levelSelectScrollRect.horizontalNormalizedPosition;
+        DataManager.Instance.SaveLevelSelectPos(levelSelectScrollRect.horizontalNormalizedPosition);
         GameManager.Instance.PlayLevelMusic();
         GameManager.Instance.SwitchScene(levelName);
         GameManager.Instance.EnableCoreScene();
     }
-
-    public void StartLevelSelect()
-    {
-        if (!GameManager.Instance.isLevelSelect)
-        {
-            persistentSoundSource.PlayOneShot(buttonSound);
-        }
-        levelPanel.SetActive(true);
-        originalPanel.SetActive(false);
-        mainMenuBG.SetActive(false);
-        /*
-        if (DataManager.Instance.isOnMobile)
-        {
-            GameManager.Instance.SetupLevelSelect(true);
-        }
-        else
-        {
-            GameManager.Instance.SetupLevelSelect(false);
-        }
-        */
-    }
-
-    /*
-    IEnumerator SceneChange(string newScene)
-    {
-        yield return new WaitForSeconds(buttonSound.length);
-        GameManager.Instance.SwitchScene(newScene);
-        GameManager.Instance.EnableCoreScene();
-        //SceneManager.LoadScene(newScene);
-    }
-    */
 
     public void ToggleTimer()
     {
@@ -372,6 +239,7 @@ public class MainMenuUI : MonoBehaviour
             timerButton.GetComponent<Image>().sprite = timerOnSprite;
             DataManager.Instance.isTimer = true;
         }
+        hasChangedSettings = true;
     }
 
     public void ToggleSoundEffects()
@@ -389,6 +257,7 @@ public class MainMenuUI : MonoBehaviour
             nonpersistentSoundSource.mute = true;//
             DataManager.Instance.isSoundMute = true;
         }
+        hasChangedSettings = true;
     }
 
     public void ToggleMusic()
@@ -406,6 +275,7 @@ public class MainMenuUI : MonoBehaviour
             levelMusicSource.mute = true;//
             DataManager.Instance.isMusicMute = true;
         }
+        hasChangedSettings = true;
     }
 
     public void OnSoundSliderChanged()
@@ -413,6 +283,7 @@ public class MainMenuUI : MonoBehaviour
         persistentSoundSource.volume = soundSlider.value;
         nonpersistentSoundSource.volume = soundSlider.value;//
         DataManager.Instance.soundVolume = soundSlider.value;
+        hasChangedSettings = true;
     }
 
     public void OnMusicSliderChanged()
@@ -420,6 +291,7 @@ public class MainMenuUI : MonoBehaviour
         mainMenuMusicSource.volume = musicSlider.value;
         levelMusicSource.volume = musicSlider.value;//
         DataManager.Instance.musicVolume = musicSlider.value;
+        hasChangedSettings = true;
     }
 
     public void ToggleMobileMode()
@@ -434,11 +306,13 @@ public class MainMenuUI : MonoBehaviour
         {
             mobileToggleText.text = "Mobile: off";
         }
+        DataManager.Instance.SaveMobileState();
     }
 
     public void ToggleRestartConfirmSettings()
     {
         DataManager.Instance.doNotShowConfirm = !DataManager.Instance.doNotShowConfirm;
+        hasChangedSettings = true;
     }
 
     public void QuitGame()
