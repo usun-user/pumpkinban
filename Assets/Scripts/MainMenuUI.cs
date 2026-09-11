@@ -54,6 +54,8 @@ public class MainMenuUI : MonoBehaviour
         nonpersistentSoundSource.volume = DataManager.Instance.soundVolume;//
         soundSlider.value = DataManager.Instance.soundVolume;
 
+        restartConfirmSettingsToggle.SetIsOnWithoutNotify(!DataManager.Instance.doNotShowConfirm);
+
         if (DataManager.Instance.isTimer)
         {
             foreach (TextMeshProUGUI timerText in timerAnyTextArr)

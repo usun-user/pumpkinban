@@ -110,7 +110,7 @@ public class LevelUI : MonoBehaviour
         } else if (Input.GetKeyUp(KeyCode.U) || Input.GetKeyUp(KeyCode.Z))
         {
             undoScript.Up();
-        } else if (won && (Input.GetKeyDown(KeyCode.N) || Input.GetKeyDown(KeyCode.Return)))
+        } else if (won && (Input.GetKeyDown(KeyCode.Return))) // || Input.GetKeyDown(KeyCode.N)
         {
             NextLevel();
         }
