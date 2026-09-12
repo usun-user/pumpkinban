@@ -8,7 +8,7 @@ using System;
 
 public class MainMenuUI : MonoBehaviour
 {
-    [SerializeField] GameObject currentPanel, currentSubPanel, settingsPanel, levelPanel, cosmeticPanel, soundButton, musicButton, timerButton, quitButton, mainMenuBG;
+    [SerializeField] GameObject currentPanel, currentSubPanel, settingsPanel, levelPanel, cosmeticPanel, soundButton, musicButton, timerButton, quitButton, mainMenuBG, cosmeticReturnButton, cosmeticSubReturnButton;
     [SerializeField] TextMeshProUGUI[] scoreTextArr, timerAnyTextArr, timerHundredTextArr;
     [SerializeField] TextMeshProUGUI timerToggleText, mobileToggleText;
     [SerializeField] Sprite soundOnSprite, soundOffSprite, musicOnSprite, musicOffSprite, timerOnSprite, timerOffSprite;
@@ -169,6 +169,13 @@ public class MainMenuUI : MonoBehaviour
     {
         currentSubPanel.SetActive(false);
         persistentSoundSource.PlayOneShot(buttonSound);
+
+        //if (currentPanel == cosmeticPanel)
+        //{
+        cosmeticReturnButton.SetActive(false);
+        cosmeticSubReturnButton.SetActive(true);
+        //}
+
         previousSubPanel = currentSubPanel;
         currentSubPanel = newSubPanel;
         newSubPanel.SetActive(true);
@@ -194,12 +201,15 @@ public class MainMenuUI : MonoBehaviour
         previousPanel.SetActive(true);
     }
 
-    public void ReturnToPreviousSubPanel()
+    public void ReturnToPreviousSubPanel() // cosmetic sub-panels
     {
         currentSubPanel.SetActive(false);
         persistentSoundSource.PlayOneShot(buttonSound);
         currentSubPanel = previousSubPanel;
         previousSubPanel.SetActive(true);
+
+        cosmeticSubReturnButton.SetActive(false); //
+        cosmeticReturnButton.SetActive(true); //
     }
 
     public void PlayLevel(string levelName)
