@@ -39,12 +39,11 @@ public class GameManager : MonoBehaviour
         Instance = this;
         //DontDestroyOnLoad(gameObject);
 
-        //Just do these in inspector:
-        /*
+        
         SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Additive);
         currentScene = "MainMenu";
-        DisableCoreScene();
-        */
+        //DisableCoreScene();
+
 
         playerScript = player.GetComponent<PlayerManager>();
         levelUIScript = levelCanvas.GetComponent<LevelUI>();
