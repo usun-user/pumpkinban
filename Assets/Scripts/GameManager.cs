@@ -189,15 +189,19 @@ public class GameManager : MonoBehaviour
         player.transform.position = spawnPos;
         movePoint.position = spawnPos;
 
-        playerScript.finishedMovingInWater = false;
+        playerScript.finishedMovingInWater = true; // = false
         //playerScript.isVerticalWater = false;
         playerScript.isMakingMove = false;
         playerScript.candy = 0;
         playerScript.hasStar = false;
         playerScript.isFirstStarMove = false;
-        playerScript.justGotStar = false;
+        //playerScript.justGotStar = false;
         playerScript.horizontalInput = 0f;
         playerScript.verticalInput = 0f;
+        playerScript.waterHorizontalInput = 0f;
+        playerScript.waterVerticalInput = 0f;
+        playerScript.mobileHorizontalInput = 0f;
+        playerScript.mobileVerticalInput = 0f;
         playerScript.playerAnimator.enabled = true;
         //playerScript.playerSpriteRenderer.sprite = playerScript.normalPlayerSprite;
 

@@ -27,8 +27,10 @@ public class PushManager : MonoBehaviour
     {
         if (!Physics2D.OverlapCircle(boxMovePoint.position + changeInPosition, .2f, stopsMovementLayer))
         {
-            undoScript.currentState.boxPos = boxMovePoint.position; //
-
+            if (undoScript.currentState.boxPos == Vector3.zero) //Vector3 cannot be null
+            {
+                undoScript.currentState.boxPos = boxMovePoint.position;
+            }
             boxMovePoint.position += changeInPosition;
             return true;
         }

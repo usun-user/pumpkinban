@@ -15,9 +15,9 @@ public class PlayerManager : MonoBehaviour
     UndoManager undoScript;
 
     public Transform movePoint;
-    public bool finishedMovingInWater, isMakingMove, isFirstStarMove, hasStar, justGotStar; //isVerticalWater
+    public bool finishedMovingInWater, isMakingMove, isFirstStarMove, hasStar; //isVerticalWater //justGotStar
     public int candy;
-    public float horizontalInput, verticalInput, mobileHorizontalInput, mobileVerticalInput; //1 = right or up, -1 = left or down
+    public float horizontalInput, verticalInput, mobileHorizontalInput, mobileVerticalInput, waterHorizontalInput, waterVerticalInput; //1 = right or up, -1 = left or down
     public Sprite starPlayerSprite; //normalPlayerSprite //don't need normalPlayerSprite bc animator automatically shows normalPlayerSprite
     public SpriteRenderer playerSpriteRenderer;
     public Animator playerAnimator;
@@ -42,18 +42,24 @@ public class PlayerManager : MonoBehaviour
                 transform.position = movePoint.position;
                 if (isFirstStarMove)
                 {
+                    //will move in same direction as last time 
+                    //if cannot move in same direction and is in water, get pushed by water
+                    if (!Move(lastDirection) && (waterVerticalInput != 0 || waterHorizontalInput != 0))
+                    {
+                        finishedMovingInWater = false;
+                        StartCoroutine(WaterMove(new Vector3(waterHorizontalInput * 1.5f, waterVerticalInput * 1.5f, 0)));
+                    } else
+                    {
+                        waterVerticalInput = 0f;
+                        waterHorizontalInput = 0f;
+                    }
                     isFirstStarMove = false;
-                    Move(lastDirection); //move in same direction as last time
                 } else
                 {
                     if (isMakingMove)
                     {
                         undoScript.SetState();
                         isMakingMove = false;
-                        if (hasStar)
-                        {
-                            isFirstStarMove = true;
-                        }
                     }
                     if (uiScript.isPlaying)
                     {
@@ -71,7 +77,7 @@ public class PlayerManager : MonoBehaviour
 
                         if (Mathf.Abs(horizontalInput) == 1f) // -1 or 1
                         {
-                            moveDirection = new Vector3(horizontalInput * 1.5f, 0, 0); // multiply by input bc of -1 or 1
+                           moveDirection = new Vector3(horizontalInput * 1.5f, 0, 0); // multiply by input bc of -1 or 1
                         }
                         else if (Mathf.Abs(verticalInput) == 1f)
                         {
@@ -82,32 +88,23 @@ public class PlayerManager : MonoBehaviour
                             return;
                         }
 
-                        if (justGotStar)
-                        {
-                            justGotStar = false;
-                            isFirstStarMove = true;
-                        }
-
                         if (Move(moveDirection))
                         {
                             undoScript.currentState.playerPos = transform.position;
+                            if (hasStar) //
+                            {
+                                isFirstStarMove = true;
+                            }
                             isMakingMove = true;
                             nonpersistentSoundSource.PlayOneShot(grassSound);
                             lastDirection = moveDirection;
-                            /*
-                            if (isFirstStarMove) // this is in "if(Move(...))" bc only need to do second star move if first was successful
-                            {
-                                isFirstStarMove = false;
-                                Move(moveDirection);
-                            }
-                            */
                         }
                     }
                 }
             }
         } else
         {
-            if (verticalInput != 0) // if (isVerticalWater) // !!!!!!!!!!!! ---> should prob use moveDirection instead of horizontal and vertical input bc inputs get reset every update
+           if (waterVerticalInput != 0) // if (isVerticalWater) // if (verticalInput != 0)
             {
                 if (transform.position.x != movePoint.position.x)
                 {
@@ -120,6 +117,7 @@ public class PlayerManager : MonoBehaviour
                 else
                 {
                     finishedMovingInWater = true;
+                    waterVerticalInput = 0f;//
                 }
             } else
             {
@@ -134,6 +132,7 @@ public class PlayerManager : MonoBehaviour
                 else
                 {
                     finishedMovingInWater = true;
+                    waterHorizontalInput = 0f;//
                 }
             }
             
@@ -178,7 +177,7 @@ public class PlayerManager : MonoBehaviour
                 hasStar = false;
                 isFirstStarMove = false;
                 undoScript.currentState.starWasLost = true;
-                undoScript.currentState.playerPos = transform.position;
+                //undoScript.currentState.playerPos = transform.position;
                 playerAnimator.enabled = true;
                 GameManager.Instance.FadeOutYellowVignette();
                 //playerSpriteRenderer.sprite = normalPlayerSprite;
@@ -207,8 +206,6 @@ public class PlayerManager : MonoBehaviour
             collision.gameObject.SetActive(false);
             undoScript.currentState.lastStar = collision.gameObject;
             hasStar = true;
-            justGotStar = true;
-            //isFirstStarMove = true;
             nonpersistentSoundSource.PlayOneShot(starSound);
             playerAnimator.enabled = false;
             playerSpriteRenderer.sprite = starPlayerSprite;
@@ -221,9 +218,36 @@ public class PlayerManager : MonoBehaviour
             uiScript.ToggleWinPanel();
             gameObject.SetActive(false);
         }
-        if (finishedMovingInWater && isMakingMove && !isFirstStarMove)
+        if (finishedMovingInWater && isMakingMove) //&& !isFirstStarMove
         {
-            finishedMovingInWater = false;
+            if (collision.gameObject.CompareTag("WaterDown"))
+            {
+                waterVerticalInput = -1f;
+                waterHorizontalInput = 0f;
+            } else if (collision.gameObject.CompareTag("WaterUp"))
+            {
+                waterVerticalInput = 1f;
+                waterHorizontalInput = 0f;
+            } else if (collision.gameObject.CompareTag("WaterLeft"))
+            {
+                waterVerticalInput = 0f;
+                waterHorizontalInput = -1f;
+            } else if (collision.gameObject.CompareTag("WaterRight"))
+            {
+                waterVerticalInput = 0f;
+                waterHorizontalInput = 1f;
+            } else
+            {
+                return;
+            }
+
+            if (!isFirstStarMove)
+            {
+                finishedMovingInWater = false;
+                StartCoroutine(WaterMove(new Vector3(waterHorizontalInput * 1.5f, waterVerticalInput * 1.5f, 0)));
+            }
+
+            /*
             if (collision.gameObject.CompareTag("WaterDown"))
             {
                 //isVerticalWater = true;
@@ -248,7 +272,8 @@ public class PlayerManager : MonoBehaviour
                 verticalInput = 0f;
                 horizontalInput = 1f;
                 StartCoroutine(WaterMove(new Vector3(1.5f, 0, 0)));
-            }
+            } 
+            */
         }
     }
 

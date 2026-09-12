@@ -131,7 +131,7 @@ public class UndoManager : MonoBehaviour
             //playerScript.moveAmount = 1.5f;
             playerScript.hasStar = false;
             playerScript.isFirstStarMove = false;
-            playerScript.justGotStar = false;
+            //playerScript.justGotStar = false;
             lastStar.SetActive(true);
             playerScript.playerAnimator.enabled = true;
             GameManager.Instance.FadeOutYellowVignette();
@@ -139,8 +139,8 @@ public class UndoManager : MonoBehaviour
         } else if (lastState.starWasLost)
         {
             playerScript.hasStar = true;
-            playerScript.isFirstStarMove = true;
-            playerScript.justGotStar = true;
+            playerScript.isFirstStarMove = false;
+            //playerScript.justGotStar = true;
             playerScript.playerAnimator.enabled = false;
             playerScript.playerSpriteRenderer.sprite = playerScript.starPlayerSprite;
             GameManager.Instance.FadeInYellowVignette();
@@ -179,7 +179,10 @@ public class UndoManager : MonoBehaviour
 
     public void Down()
     {
-        undoCoroutine = StartCoroutine(UndoWhileHeld());
+        if (undoCoroutine == null) //
+        {
+            undoCoroutine = StartCoroutine(UndoWhileHeld());
+        }
     }
 
     public void Up()
