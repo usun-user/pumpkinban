@@ -1620,8 +1620,6 @@ MonoBehaviour:
   verticalInput: 0
   mobileHorizontalInput: 0
   mobileVerticalInput: 0
-  waterHorizontalInput: 0
-  waterVerticalInput: 0
   starPlayerSprite: {fileID: 21300000, guid: 44c6950199583854497b00e181d57ff3, type: 3}
   playerSpriteRenderer: {fileID: 182938883}
   playerAnimator: {fileID: 182938886}

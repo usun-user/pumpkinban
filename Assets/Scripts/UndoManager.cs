@@ -19,8 +19,6 @@ public class UndoManager : MonoBehaviour
     public GameState currentState;
     Stack<GameState> history;
 
-    Vector3 previousPos;
-
     Coroutine undoCoroutine;
 
     void Start()
@@ -42,18 +40,15 @@ public class UndoManager : MonoBehaviour
 
     public void SetState()
     {
-        // Doesn't work for some reason
-        /*
-        if (previousPos == currentState.playerPos 
+        if (playerScript.transform.position == currentState.playerPos
             && !currentState.lastCandy 
             && !currentState.lastBox 
-            && !currentState.lastStar) //&& !currentState.lastWeb
+            && !currentState.lastStar
+            && !currentState.starWasLost) //&& !currentState.lastWeb // web not needed bc already covered by lastBox
         {
             return;
         }
-        previousPos = currentState.playerPos; 
-        */
-        
+
         history.Push(currentState);
         currentState = new GameState();
         movedAfterUndo = true;

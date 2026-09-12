@@ -14326,7 +14326,7 @@ Transform:
   m_GameObject: {fileID: 473780553}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 960.00006, y: 0, z: -9719.223}
+  m_LocalPosition: {x: 960, y: 0, z: 0}
   m_LocalScale: {x: 107.99137, y: 107.99137, z: 107.99137}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -33052,7 +33052,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 66.333374, y: -47.594513}
+  m_AnchoredPosition: {x: 66.333374, y: -47.594482}
   m_SizeDelta: {x: 240, y: 45}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1395901115
@@ -37104,7 +37104,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Collect candies and reach flag each level!
+  m_text: Collect candy and reach the level flag!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1f0f38a8218fac94abaeb93e88e77623, type: 2}
   m_sharedMaterial: {fileID: 4483627454505504788, guid: 1f0f38a8218fac94abaeb93e88e77623, type: 2}

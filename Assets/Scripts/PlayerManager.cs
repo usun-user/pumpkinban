@@ -17,7 +17,7 @@ public class PlayerManager : MonoBehaviour
     public Transform movePoint;
     public bool finishedMovingInWater, isMakingMove, isFirstStarMove, hasStar; //isVerticalWater //justGotStar
     public int candy;
-    public float horizontalInput, verticalInput, mobileHorizontalInput, mobileVerticalInput, waterHorizontalInput, waterVerticalInput; //1 = right or up, -1 = left or down
+    public float horizontalInput, verticalInput, mobileHorizontalInput, mobileVerticalInput; //1 = right or up, -1 = left or down //waterHorizontalInput, waterVerticalInput
     public Sprite starPlayerSprite; //normalPlayerSprite //don't need normalPlayerSprite bc animator automatically shows normalPlayerSprite
     public SpriteRenderer playerSpriteRenderer;
     public Animator playerAnimator;
@@ -42,6 +42,7 @@ public class PlayerManager : MonoBehaviour
                 transform.position = movePoint.position;
                 if (isFirstStarMove)
                 {
+                    /*
                     //will move in same direction as last time 
                     //if cannot move in same direction and is in water, get pushed by water
                     if (!Move(lastDirection) && (waterVerticalInput != 0 || waterHorizontalInput != 0))
@@ -53,7 +54,10 @@ public class PlayerManager : MonoBehaviour
                         waterVerticalInput = 0f;
                         waterHorizontalInput = 0f;
                     }
+                    */
+
                     isFirstStarMove = false;
+                    Move(lastDirection); //move in same direction as last time
                 } else
                 {
                     if (isMakingMove)
@@ -104,7 +108,7 @@ public class PlayerManager : MonoBehaviour
             }
         } else
         {
-           if (waterVerticalInput != 0) // if (isVerticalWater) // if (verticalInput != 0)
+           if (verticalInput != 0) // if (isVerticalWater) // if (waterVerticalInput != 0)
             {
                 if (transform.position.x != movePoint.position.x)
                 {
@@ -117,7 +121,7 @@ public class PlayerManager : MonoBehaviour
                 else
                 {
                     finishedMovingInWater = true;
-                    waterVerticalInput = 0f;//
+                    //waterVerticalInput = 0f;//
                 }
             } else
             {
@@ -132,7 +136,7 @@ public class PlayerManager : MonoBehaviour
                 else
                 {
                     finishedMovingInWater = true;
-                    waterHorizontalInput = 0f;//
+                    //waterHorizontalInput = 0f;//
                 }
             }
             
@@ -191,6 +195,8 @@ public class PlayerManager : MonoBehaviour
                 isMakingMove = false;
                 nonpersistentSoundSource.PlayOneShot(gameOverSound);
                 uiScript.ToggleDeathPanel();
+                mobileHorizontalInput = 0f;
+                mobileVerticalInput = 0f;
                 horizontalInput = 0f;
                 verticalInput = 0f;
                 gameObject.SetActive(false);
@@ -218,34 +224,33 @@ public class PlayerManager : MonoBehaviour
             uiScript.ToggleWinPanel();
             gameObject.SetActive(false);
         }
-        if (finishedMovingInWater && isMakingMove) //&& !isFirstStarMove
+
+        if (finishedMovingInWater && isMakingMove && (!isFirstStarMove || Physics2D.OverlapCircle(movePoint.position + lastDirection, .2f, stopsMovementLayer))) //&& !isFirstStarMove
         {
             if (collision.gameObject.CompareTag("WaterDown"))
             {
-                waterVerticalInput = -1f;
-                waterHorizontalInput = 0f;
+                verticalInput = -1f;
+                horizontalInput = 0f;
             } else if (collision.gameObject.CompareTag("WaterUp"))
             {
-                waterVerticalInput = 1f;
-                waterHorizontalInput = 0f;
+                verticalInput = 1f;
+                horizontalInput = 0f;
             } else if (collision.gameObject.CompareTag("WaterLeft"))
             {
-                waterVerticalInput = 0f;
-                waterHorizontalInput = -1f;
+                verticalInput = 0f;
+                horizontalInput = -1f;
             } else if (collision.gameObject.CompareTag("WaterRight"))
             {
-                waterVerticalInput = 0f;
-                waterHorizontalInput = 1f;
+                verticalInput = 0f;
+                horizontalInput = 1f;
             } else
             {
                 return;
             }
 
-            if (!isFirstStarMove)
-            {
-                finishedMovingInWater = false;
-                StartCoroutine(WaterMove(new Vector3(waterHorizontalInput * 1.5f, waterVerticalInput * 1.5f, 0)));
-            }
+            finishedMovingInWater = false;
+            isFirstStarMove = false;
+            StartCoroutine(WaterMove(new Vector3(horizontalInput * 1.5f, verticalInput * 1.5f, 0)));
 
             /*
             if (collision.gameObject.CompareTag("WaterDown"))

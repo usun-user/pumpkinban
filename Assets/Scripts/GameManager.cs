@@ -198,8 +198,8 @@ public class GameManager : MonoBehaviour
         //playerScript.justGotStar = false;
         playerScript.horizontalInput = 0f;
         playerScript.verticalInput = 0f;
-        playerScript.waterHorizontalInput = 0f;
-        playerScript.waterVerticalInput = 0f;
+        //playerScript.waterHorizontalInput = 0f;
+        //playerScript.waterVerticalInput = 0f;
         playerScript.mobileHorizontalInput = 0f;
         playerScript.mobileVerticalInput = 0f;
         playerScript.playerAnimator.enabled = true;

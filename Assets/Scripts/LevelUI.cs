@@ -177,7 +177,9 @@ public class LevelUI : MonoBehaviour
         isPlaying = false;
         won = true;
         levelMusicSource.Pause();
-        levelIndex = sceneName[sceneName.Length - 1] - '0' - 1;
+        //levelIndex = sceneName[sceneName.Length - 1] - '0' - 1;
+        levelIndex = int.Parse(sceneName.Substring(5)) - 1; // reads number after "Level", which is 5 characters
+
         if (currentScore > DataManager.Instance.scoreArr[levelIndex])
         {
             DataManager.Instance.scoreArr[levelIndex] = currentScore;
