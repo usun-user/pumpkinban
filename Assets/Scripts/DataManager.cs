@@ -11,7 +11,7 @@ public class DataManager : MonoBehaviour
 
     public int numberOfLevels;
 
-    public bool isTimer, isMusicMute, isSoundMute, isOnMobile, doNotShowConfirm;
+    public bool isTimer, isMusicMute, isSoundMute, isOnMobile, doNotShowConfirm, firstTimePlaying;
     public float musicVolume, soundVolume; //levelSelectPos
     public int[] scoreArr;
     public float[] timeAnyArr, timeHundredArr;
@@ -46,6 +46,7 @@ public class DataManager : MonoBehaviour
             //bodyIndex = PlayerPrefs.GetInt("bodyIndex");
         } else
         {
+            firstTimePlaying = true;
             PlayerPrefs.SetInt("isTimer", 0);
             PlayerPrefs.SetInt("isMusicMute", 0);
             PlayerPrefs.SetInt("isSoundMute", 0);

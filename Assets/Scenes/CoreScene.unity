@@ -147,7 +147,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6700012}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -9719.998}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 108, y: 108, z: 108}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4086,6 +4086,7 @@ MonoBehaviour:
   spawnPos: {x: 0, y: 0, z: 0}
   isLevelSelect: 0
   isSwitchingScene: 0
+  isFadingMusic: 0
   playerScript: {fileID: 182938885}
   levelUIScript: {fileID: 8457706778626765642}
   cameraFollowScript: {fileID: 1352301680}
@@ -4385,6 +4386,7 @@ MonoBehaviour:
   isSoundMute: 0
   isOnMobile: 0
   doNotShowConfirm: 0
+  firstTimePlaying: 0
   musicVolume: 0.5
   soundVolume: 0.5
   scoreArr: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -11749,6 +11751,7 @@ MonoBehaviour:
   mobileButton: {fileID: 1730747514}
   infoButton: {fileID: 83154830}
   yellowVignetteObj: {fileID: 690794592}
+  nextLevelButton: {fileID: 457921104}
   scoreTextArr:
   - {fileID: 2070357110}
   - {fileID: 1802931107}

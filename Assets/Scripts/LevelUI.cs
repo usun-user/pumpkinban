@@ -10,7 +10,7 @@ using System;
 public class LevelUI : MonoBehaviour
 {
     public GameObject originalPanel, deathPanel, winPanel, settingsPanel, infoPanel, mobilePanel, restartConfirmPanel, restartConfirmBG; // use "[SerializeField]" instead of "public" in future by making Setup() here that doesn't need GameManager
-    [SerializeField] GameObject player, soundButton, musicButton, timerButton, mobileButton, infoButton, yellowVignetteObj; //undoManager
+    [SerializeField] GameObject player, soundButton, musicButton, timerButton, mobileButton, infoButton, yellowVignetteObj, nextLevelButton; //undoManager
     [SerializeField] TextMeshProUGUI[] scoreTextArr, timerTextArr;
     [SerializeField] TextMeshProUGUI timerToggleText;
     [SerializeField] Sprite soundOnSprite, soundOffSprite, musicOnSprite, musicOffSprite, timerOnSprite, timerOffSprite, mobileOnSprite, mobileOffSprite;
@@ -55,12 +55,19 @@ public class LevelUI : MonoBehaviour
         {
             soundButton.GetComponent<Image>().sprite = soundOnSprite;
         }
-        mainMenuMusicSource.volume = DataManager.Instance.musicVolume;
-        levelMusicSource.volume = DataManager.Instance.musicVolume;
-        musicSlider.value = DataManager.Instance.musicVolume;
-        persistentSoundSource.volume = DataManager.Instance.soundVolume;
-        nonpersistentSoundSource.volume = DataManager.Instance.soundVolume;
-        soundSlider.value = DataManager.Instance.soundVolume;
+        
+        float savedMusicVolume = DataManager.Instance.musicVolume;
+        float savedSoundVolume = DataManager.Instance.soundVolume;
+        if (!GameManager.Instance.isFadingMusic)
+        {
+            mainMenuMusicSource.volume = savedMusicVolume;
+            levelMusicSource.volume = savedMusicVolume;
+
+            persistentSoundSource.volume = savedSoundVolume;
+            nonpersistentSoundSource.volume = savedSoundVolume;
+        }
+        musicSlider.value = savedMusicVolume;
+        soundSlider.value = savedSoundVolume;
 
         restartConfirmSettingsToggle.SetIsOnWithoutNotify(!DataManager.Instance.doNotShowConfirm);
 
@@ -72,6 +79,17 @@ public class LevelUI : MonoBehaviour
                 timerText.gameObject.SetActive(true);
             }
             timerButton.GetComponent<Image>().sprite = timerOnSprite;
+        }
+
+        if (DataManager.Instance.isOnMobile)
+        {
+            mobilePanel.SetActive(true);
+            mobileButton.GetComponent<Image>().sprite = mobileOnSprite;
+        }
+        else
+        {
+            mobilePanel.SetActive(false);
+            mobileButton.GetComponent<Image>().sprite = mobileOffSprite;
         }
 
         /*
@@ -115,12 +133,6 @@ public class LevelUI : MonoBehaviour
         {
             NextLevel();
         }
-        /*
-        else if (Input.GetKeyDown(KeyCode.U) || Input.GetKeyDown(KeyCode.Z))
-        {
-            undoScript.Undo();
-        } 
-        */
 
         currentScore = playerScript.candy;
         scoreTextArr[0].text = currentScore.ToString() + "/5";
@@ -148,7 +160,8 @@ public class LevelUI : MonoBehaviour
         //DataManager.Instance.musicVolume = levelMusicSource.volume;
         //DataManager.Instance.soundVolume = persistentSoundSource.volume;
 
-        // move this away from Update() and instead make it a result of button click
+        //Shouldn't need bc already updated in Setup() and ToggleMobileMode()
+        /*
         if (DataManager.Instance.isOnMobile)
         {
             mobilePanel.SetActive(true);
@@ -158,6 +171,7 @@ public class LevelUI : MonoBehaviour
             mobilePanel.SetActive(false);
             mobileButton.GetComponent<Image>().sprite = mobileOffSprite;
         }
+        */
     }
 
     public void ToggleDeathPanel()
@@ -200,6 +214,15 @@ public class LevelUI : MonoBehaviour
             DataManager.Instance.timeAnyArr[levelIndex] = currentTime;
         }
         DataManager.Instance.SaveLevel();
+
+        if (levelIndex + 1 == DataManager.Instance.numberOfLevels)
+        {
+            nextLevelButton.SetActive(false);
+        } else
+        {
+            nextLevelButton.SetActive(true);
+        }
+
         originalPanel.SetActive(false);
         deathPanel.SetActive(false);
         winPanel.SetActive(true);
@@ -401,31 +424,36 @@ public class LevelUI : MonoBehaviour
 
     public void OnSoundSliderChanged()
     {
-        persistentSoundSource.volume = soundSlider.value;
-        nonpersistentSoundSource.volume = soundSlider.value;
-        DataManager.Instance.soundVolume = soundSlider.value;
+        float soundSliderValue = soundSlider.value;
+        persistentSoundSource.volume = soundSliderValue;
+        nonpersistentSoundSource.volume = soundSliderValue;
+        DataManager.Instance.soundVolume = soundSliderValue;
         hasChangedSettings = true;
     }
 
     public void OnMusicSliderChanged()
     {
-        mainMenuMusicSource.volume = musicSlider.value;
-        levelMusicSource.volume = musicSlider.value;
-        DataManager.Instance.musicVolume = musicSlider.value;
+        float musicSliderValue = musicSlider.value;
+        mainMenuMusicSource.volume = musicSliderValue;
+        levelMusicSource.volume = musicSliderValue;
+        DataManager.Instance.musicVolume = musicSliderValue;
         hasChangedSettings = true;
     }
 
     public void ToggleMobileMode()
     {
         persistentSoundSource.PlayOneShot(buttonSound);
-        DataManager.Instance.isOnMobile = !DataManager.Instance.isOnMobile;
         if (DataManager.Instance.isOnMobile)
         {
-            mobileButton.GetComponent<Image>().sprite = mobileOnSprite;
-            Screen.fullScreen = true;
+            DataManager.Instance.isOnMobile = false;
+            mobilePanel.SetActive(false);
+            mobileButton.GetComponent<Image>().sprite = mobileOffSprite;
         } else
         {
-            mobileButton.GetComponent<Image>().sprite = mobileOffSprite;
+            DataManager.Instance.isOnMobile = true;
+            mobilePanel.SetActive(true);
+            mobileButton.GetComponent<Image>().sprite = mobileOnSprite;
+            Screen.fullScreen = true;
         }
         hasChangedSettings = true;
     }

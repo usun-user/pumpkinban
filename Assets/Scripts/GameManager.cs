@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
     public AudioSource persistentSoundSource, nonpersistentSoundSource, mainMenuMusicSource, levelMusicSource;
     public GameObject player;
     public Vector3 spawnPos;
-    public bool isLevelSelect, isSwitchingScene;
+    public bool isLevelSelect, isSwitchingScene, isFadingMusic;
 
     [SerializeField] PlayerManager playerScript;
     public LevelUI levelUIScript;
@@ -158,6 +158,7 @@ public class GameManager : MonoBehaviour
     
     IEnumerator MusicCrossfade(AudioSource oldSource, AudioSource newSource)
     {
+        isFadingMusic = true;
         newSource.Play();
 
         float time = 0f;
@@ -178,6 +179,7 @@ public class GameManager : MonoBehaviour
         oldSource.Stop();
         oldSource.volume = 0f;
         newSource.volume = maxMusicVolume;
+        isFadingMusic = false;
     }
 
     public void ResetLevel() // only called by SpawnPoint script so that spawn point exists before this happens

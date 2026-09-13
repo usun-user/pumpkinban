@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
-//using UnityEngine.Device;
 
 public class MainMenuUI : MonoBehaviour
 {
@@ -25,39 +24,51 @@ public class MainMenuUI : MonoBehaviour
     void Start()
     {
         persistentSoundSource = GameManager.Instance.persistentSoundSource;
-        nonpersistentSoundSource = GameManager.Instance.nonpersistentSoundSource;//
+        nonpersistentSoundSource = GameManager.Instance.nonpersistentSoundSource;
         mainMenuMusicSource = GameManager.Instance.mainMenuMusicSource;
-        levelMusicSource = GameManager.Instance.levelMusicSource;//
+        levelMusicSource = GameManager.Instance.levelMusicSource;
 
-        mainMenuMusicSource.mute = DataManager.Instance.isMusicMute;
-        levelMusicSource.mute = DataManager.Instance.isMusicMute;//
-        if (mainMenuMusicSource.mute)
+        bool isCurrentlyMusicMute = DataManager.Instance.isMusicMute;
+        mainMenuMusicSource.mute = isCurrentlyMusicMute;
+        levelMusicSource.mute = isCurrentlyMusicMute;
+        if (isCurrentlyMusicMute)
         {
             musicButton.GetComponent<Image>().sprite = musicOffSprite;
         } else
         {
             musicButton.GetComponent<Image>().sprite = musicOnSprite;
         }
-        persistentSoundSource.mute = DataManager.Instance.isSoundMute;
-        nonpersistentSoundSource.mute = DataManager.Instance.isSoundMute;//
-        if (persistentSoundSource.mute)
+
+        bool isCurrentlySoundMute = DataManager.Instance.isSoundMute;
+        persistentSoundSource.mute = isCurrentlySoundMute;
+        nonpersistentSoundSource.mute = isCurrentlySoundMute;
+        if (isCurrentlySoundMute)
         {
             soundButton.GetComponent<Image>().sprite = soundOffSprite;
         } else
         {
             soundButton.GetComponent<Image>().sprite = soundOnSprite;
         }
-        mainMenuMusicSource.volume = DataManager.Instance.musicVolume;
-        levelMusicSource.volume = DataManager.Instance.musicVolume;//
-        musicSlider.value = DataManager.Instance.musicVolume;
-        persistentSoundSource.volume = DataManager.Instance.soundVolume;
-        nonpersistentSoundSource.volume = DataManager.Instance.soundVolume;//
-        soundSlider.value = DataManager.Instance.soundVolume;
+
+        float savedMusicVolume = DataManager.Instance.musicVolume;
+        float savedSoundVolume = DataManager.Instance.soundVolume;
+        if (!GameManager.Instance.isFadingMusic)
+        {
+            mainMenuMusicSource.volume = savedMusicVolume;
+            levelMusicSource.volume = savedMusicVolume;
+
+            persistentSoundSource.volume = savedSoundVolume;
+            nonpersistentSoundSource.volume = savedSoundVolume;
+            
+        }
+        musicSlider.value = savedMusicVolume;
+        soundSlider.value = savedSoundVolume;
 
         restartConfirmSettingsToggle.SetIsOnWithoutNotify(!DataManager.Instance.doNotShowConfirm);
 
         if (DataManager.Instance.isTimer)
         {
+            timerToggleText.text = "Timer on";
             foreach (TextMeshProUGUI timerText in timerAnyTextArr)
             {
                 timerText.gameObject.SetActive(true);
@@ -93,17 +104,20 @@ public class MainMenuUI : MonoBehaviour
             }
         }
 
-        if (DataManager.Instance.isTimer)
-        {
-            timerToggleText.text = "Timer on";
-        } else
-        {
-            timerToggleText.text = "Timer off";
-        }
-
-        if (Application.isMobilePlatform || Application.platform == RuntimePlatform.IPhonePlayer)
+        if (DataManager.Instance.firstTimePlaying && (Input.touchSupported || Application.isMobilePlatform))
         {
             DataManager.Instance.isOnMobile = true;
+            DataManager.Instance.SaveMobileState();
+            DataManager.Instance.firstTimePlaying = false;
+            mobileToggleText.text = "Mobile: on";
+        } 
+        else if (DataManager.Instance.isOnMobile)
+        {
+            mobileToggleText.text = "Mobile: on";
+        }
+        else
+        {
+            mobileToggleText.text = "Mobile: off";
         }
 
         levelSelectScrollRect.horizontalNormalizedPosition = DataManager.Instance.GetLevelSelectPos();
@@ -130,9 +144,17 @@ public class MainMenuUI : MonoBehaviour
             }
         }
 
-        DataManager.Instance.musicVolume = mainMenuMusicSource.volume;
-        DataManager.Instance.soundVolume = persistentSoundSource.volume;
+        //Shouldn't need bc already updated in Start() and On_SliderChanged()
+        /*
+        if (!GameManager.Instance.isFadingMusic)
+        {
+            DataManager.Instance.musicVolume = mainMenuMusicSource.volume;
+            DataManager.Instance.soundVolume = persistentSoundSource.volume;
+        }
+        */
 
+        //Shouldn't need bc already updated in Start() and ToggleMobileMode()
+        /*
         if (DataManager.Instance.isOnMobile)
         {
             mobileToggleText.text = "Mobile: on";
@@ -140,6 +162,7 @@ public class MainMenuUI : MonoBehaviour
         {
             mobileToggleText.text = "Mobile: off";
         }
+        */
     }
 
     public void ChangePanel(GameObject newPanel)
