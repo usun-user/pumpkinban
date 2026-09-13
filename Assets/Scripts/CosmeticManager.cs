@@ -76,7 +76,6 @@ public class CosmeticManager : MonoBehaviour
 
     public void ChangeCosmeticItem(Sprite newCosmeticItem)
     {
-        hasChangedCosmetics = true;
         if (hatPanel.activeSelf)
         {
             if (hat.sprite == newCosmeticItem)
@@ -110,6 +109,7 @@ public class CosmeticManager : MonoBehaviour
                 SelectItem(body, playerBody, previousBodyToggle, newCosmeticItem);
             }
         }
+        hasChangedCosmetics = true;
     }
 
     private void SelectItem(Image cosmeticItem, SpriteRenderer playerCosmeticItem, Toggle previousToggle, Sprite newCosmeticItem)
@@ -135,27 +135,37 @@ public class CosmeticManager : MonoBehaviour
 
     private void ClearAllCosmetics()
     {
-        ClearItem(hat, playerHat, currentHatToggle);
-        ClearItem(face, playerFace, currentFaceToggle);
-        ClearItem(body, playerBody, currentBodyToggle);
+        if (currentHatToggle)
+        {
+            ClearItem(hat, playerHat, currentHatToggle);
+        }
+        if (currentFaceToggle)
+        {
+            ClearItem(face, playerFace, currentFaceToggle);
+        }
+        if (currentBodyToggle)
+        {
+            ClearItem(body, playerBody, currentBodyToggle);
+        }
     }
 
     public void ClearCosmetics()
     {
-        if (hatPanel.activeSelf)
+        if (hatPanel.activeSelf && currentHatToggle)
         {
             ClearItem(hat, playerHat, currentHatToggle);
-        } else if (facePanel.activeSelf)
+        } else if (facePanel.activeSelf && currentFaceToggle)
         {
             ClearItem(face, playerFace, currentFaceToggle);
         }
-        else if (bodyPanel.activeSelf)
+        else if (bodyPanel.activeSelf && currentBodyToggle)
         {
             ClearItem(body, playerBody, currentBodyToggle);
         } else
         {
             ClearAllCosmetics();
         }
+        hasChangedCosmetics = true;
     }
 
     public void SaveCurrentCosmetics()
