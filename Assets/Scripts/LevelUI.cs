@@ -9,8 +9,8 @@ using System;
 
 public class LevelUI : MonoBehaviour
 {
-    public GameObject originalPanel, deathPanel, winPanel, settingsPanel, infoPanel, mobilePanel, restartConfirmPanel, restartConfirmBG; // use "[SerializeField]" instead of "public" in future by making Setup() here that doesn't need GameManager
-    [SerializeField] GameObject player, soundButton, musicButton, timerButton, mobileButton, infoButton, yellowVignetteObj, nextLevelButton; //undoManager
+    [SerializeField] GameObject originalPanel, deathPanel, winPanel, settingsPanel, infoPanel, mobilePanel, restartConfirmPanel, restartConfirmBG;
+    [SerializeField] GameObject player, soundButton, musicButton, timerButton, mobileButton, infoButton, yellowVignetteObj, nextLevelButton;
     [SerializeField] TextMeshProUGUI[] scoreTextArr, timerTextArr;
     [SerializeField] TextMeshProUGUI timerToggleText;
     [SerializeField] Sprite soundOnSprite, soundOffSprite, musicOnSprite, musicOffSprite, timerOnSprite, timerOffSprite, mobileOnSprite, mobileOffSprite;
@@ -21,13 +21,12 @@ public class LevelUI : MonoBehaviour
     [SerializeField] PlayerManager playerScript;
     [SerializeField] UndoManager undoScript;
     
-    public bool movedAfterUndo, died, won, isPlaying = true;
-    public int currentScore;
-    public float currentTime = 0f;
+    public bool died, won, isPlaying; //movedAfterUndo
     public string sceneName;
 
-    int levelIndex;
     bool hasChangedSettings;
+    int currentScore, levelIndex;
+    float currentTime;
 
     void Start()
     {
@@ -36,6 +35,21 @@ public class LevelUI : MonoBehaviour
 
     public void Setup()
     {
+        //movedAfterUndo = false;
+        isPlaying = true;
+        currentScore = 0;
+        currentTime = 0f;
+        died = false;
+        won = false;
+
+        deathPanel.SetActive(false);
+        winPanel.SetActive(false);
+        settingsPanel.SetActive(false);
+        infoPanel.SetActive(false);
+        restartConfirmPanel.SetActive(false);
+        restartConfirmBG.SetActive(false);
+        originalPanel.SetActive(true);
+
         sceneName = GameManager.Instance.currentScene;
         levelMusicSource.mute = DataManager.Instance.isMusicMute;
         mainMenuMusicSource.mute = DataManager.Instance.isMusicMute;
@@ -91,11 +105,6 @@ public class LevelUI : MonoBehaviour
             mobilePanel.SetActive(false);
             mobileButton.GetComponent<Image>().sprite = mobileOffSprite;
         }
-
-        /*
-        playerScript = player.GetComponent<PlayerManager>();
-        undoScript = undoManager.GetComponent<UndoManager>();
-        */
 
         hasChangedSettings = false;
     }
@@ -155,23 +164,6 @@ public class LevelUI : MonoBehaviour
                 timerText.text = time.ToString(@"s\.ff");
             }
         }
-
-        //Shouldn't need bc already updated in Setup() and On_SliderChanged()
-        //DataManager.Instance.musicVolume = levelMusicSource.volume;
-        //DataManager.Instance.soundVolume = persistentSoundSource.volume;
-
-        //Shouldn't need bc already updated in Setup() and ToggleMobileMode()
-        /*
-        if (DataManager.Instance.isOnMobile)
-        {
-            mobilePanel.SetActive(true);
-            mobileButton.GetComponent<Image>().sprite = mobileOnSprite;
-        } else
-        {
-            mobilePanel.SetActive(false);
-            mobileButton.GetComponent<Image>().sprite = mobileOffSprite;
-        }
-        */
     }
 
     public void ToggleDeathPanel()
@@ -234,6 +226,7 @@ public class LevelUI : MonoBehaviour
     public void ToggleSettingsPanel()
     {
         isPlaying = false;
+        playerScript.SetPlayerActive(false);
         persistentSoundSource.PlayOneShot(buttonSound);
         originalPanel.SetActive(false);
         deathPanel.SetActive(false);
@@ -266,6 +259,7 @@ public class LevelUI : MonoBehaviour
         if (!died && !won)
         {
             isPlaying = true;
+            playerScript.SetPlayerActive(true);
         }
         persistentSoundSource.PlayOneShot(buttonSound);
         settingsPanel.SetActive(false);
@@ -294,7 +288,7 @@ public class LevelUI : MonoBehaviour
 
     public void RestartGame()
     {
-        playerScript.enabled = false; // ? Do not SetActive(false) entire player because then cannot move to spawnPos
+        playerScript.SetPlayerActive(false);
         if (DataManager.Instance.doNotShowConfirm)
         {
             GameManager.Instance.SwitchScene(sceneName);
@@ -320,7 +314,7 @@ public class LevelUI : MonoBehaviour
     {
         restartConfirmPanel.SetActive(false);
         restartConfirmBG.SetActive(false);
-        playerScript.enabled = true;
+        playerScript.SetPlayerActive(true);
     }
 
     public void ToggleRestartConfirmSettings()
@@ -453,7 +447,7 @@ public class LevelUI : MonoBehaviour
             DataManager.Instance.isOnMobile = true;
             mobilePanel.SetActive(true);
             mobileButton.GetComponent<Image>().sprite = mobileOnSprite;
-            Screen.fullScreen = true;
+            //Screen.fullScreen = true;
         }
         hasChangedSettings = true;
     }

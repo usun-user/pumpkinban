@@ -7,35 +7,50 @@ using UnityEngine.Audio;
 public class PlayerManager : MonoBehaviour
 {
     [SerializeField] float moveSpeed;
-    //[SerializeField] GameObject canvas, undoManager;
     [SerializeField] LayerMask stopsMovementLayer, boxLayer;
     [SerializeField] AudioSource nonpersistentSoundSource;
     [SerializeField] AudioClip candySound, grassSound, waterSound, gameOverSound, winSound, starSound, hurtSound;
+    //[SerializeField] BoxCollider2D playerCollider;
     [SerializeField] LevelUI uiScript;
     [SerializeField] UndoManager undoScript;
 
     public Transform movePoint;
-    public bool finishedMovingInWater, isMakingMove, isFirstStarMove, hasStar; //isVerticalWater //justGotStar
+    public bool finishedMovingInWater, isMakingMove, isFirstStarMove, hasStar;
     public int candy;
-    public float horizontalInput, verticalInput, mobileHorizontalInput, mobileVerticalInput; //1 = right or up, -1 = left or down //waterHorizontalInput, waterVerticalInput
-    public Sprite starPlayerSprite; //normalPlayerSprite //don't need normalPlayerSprite bc animator automatically shows normalPlayerSprite
+    public float horizontalInput, verticalInput, mobileHorizontalInput, mobileVerticalInput; //1 = right/up, -1 = left/down
+    public Sprite starPlayerSprite; //don't need normalPlayerSprite bc animator automatically shows normalPlayerSprite
     public SpriteRenderer playerSpriteRenderer;
     public Animator playerAnimator;
 
     Vector3 lastDirection;
+    bool isPlaying;
 
     void Start()
     {
-        /*
-        uiScript = canvas.GetComponent<LevelUI>();
-        undoScript = undoManager.GetComponent<UndoManager>();
-        */
         movePoint.parent = null;
-        //finishedMovingInWater = true;
+    }
+
+    public void Setup()
+    {
+        finishedMovingInWater = true;
+        isMakingMove = false;
+        candy = 0;
+        hasStar = false;
+        isFirstStarMove = false;
+        horizontalInput = 0f;
+        verticalInput = 0f;
+        mobileHorizontalInput = 0f;
+        mobileVerticalInput = 0f;
+        playerAnimator.enabled = true;
+        playerSpriteRenderer.enabled = true;
+        SetPlayerActive(true);
     }
 
     void Update()
     {
+        if (!isPlaying)
+            return;
+
         if (finishedMovingInWater)
         {
             transform.position = Vector3.MoveTowards(transform.position, movePoint.position, moveSpeed * Time.deltaTime);
@@ -44,20 +59,6 @@ public class PlayerManager : MonoBehaviour
                 transform.position = movePoint.position;
                 if (isFirstStarMove)
                 {
-                    /*
-                    //will move in same direction as last time 
-                    //if cannot move in same direction and is in water, get pushed by water
-                    if (!Move(lastDirection) && (waterVerticalInput != 0 || waterHorizontalInput != 0))
-                    {
-                        finishedMovingInWater = false;
-                        StartCoroutine(WaterMove(new Vector3(waterHorizontalInput * 1.5f, waterVerticalInput * 1.5f, 0)));
-                    } else
-                    {
-                        waterVerticalInput = 0f;
-                        waterHorizontalInput = 0f;
-                    }
-                    */
-
                     isFirstStarMove = false;
                     Move(lastDirection); //move in same direction as last time
                 } else
@@ -67,50 +68,50 @@ public class PlayerManager : MonoBehaviour
                         undoScript.SetState();
                         isMakingMove = false;
                     }
-                    if (uiScript.isPlaying)
+                    //if (uiScript.isPlaying)
+                    //{
+                    if (!DataManager.Instance.isOnMobile)
                     {
-                        if (!DataManager.Instance.isOnMobile)
-                        {
-                            horizontalInput = Input.GetAxisRaw("Horizontal");
-                            verticalInput = Input.GetAxisRaw("Vertical");
-                        } else
-                        {
-                            horizontalInput = mobileHorizontalInput;
-                            verticalInput = mobileVerticalInput;
-                        }
-
-                        Vector3 moveDirection;
-
-                        if (Mathf.Abs(horizontalInput) == 1f) // -1 or 1
-                        {
-                           moveDirection = new Vector3(horizontalInput * 1.5f, 0, 0); // multiply by input bc of -1 or 1
-                        }
-                        else if (Mathf.Abs(verticalInput) == 1f)
-                        {
-                            moveDirection = new Vector3(0, verticalInput * 1.5f, 0);
-                        }
-                        else
-                        {
-                            return;
-                        }
-
-                        if (Move(moveDirection))
-                        {
-                            undoScript.currentState.playerPos = transform.position;
-                            if (hasStar) //
-                            {
-                                isFirstStarMove = true;
-                            }
-                            isMakingMove = true;
-                            nonpersistentSoundSource.PlayOneShot(grassSound);
-                            lastDirection = moveDirection;
-                        }
+                        horizontalInput = Input.GetAxisRaw("Horizontal");
+                        verticalInput = Input.GetAxisRaw("Vertical");
+                    } else
+                    {
+                        horizontalInput = mobileHorizontalInput;
+                        verticalInput = mobileVerticalInput;
                     }
+
+                    Vector3 moveDirection;
+
+                    if (Mathf.Abs(horizontalInput) == 1f) // -1 or 1
+                    {
+                        moveDirection = new Vector3(horizontalInput * 1.5f, 0, 0); // multiply by input bc of -1 or 1
+                    }
+                    else if (Mathf.Abs(verticalInput) == 1f)
+                    {
+                        moveDirection = new Vector3(0, verticalInput * 1.5f, 0);
+                    }
+                    else
+                    {
+                        return;
+                    }
+
+                    if (Move(moveDirection))
+                    {
+                        undoScript.currentState.playerPos = transform.position;
+                        if (hasStar)
+                        {
+                            isFirstStarMove = true;
+                        }
+                        isMakingMove = true;
+                        nonpersistentSoundSource.PlayOneShot(grassSound);
+                        lastDirection = moveDirection;
+                    }
+                    //}
                 }
             }
         } else
         {
-           if (verticalInput != 0) // if (isVerticalWater) // if (waterVerticalInput != 0)
+           if (verticalInput != 0)
             {
                 if (transform.position.x != movePoint.position.x)
                 {
@@ -123,7 +124,6 @@ public class PlayerManager : MonoBehaviour
                 else
                 {
                     finishedMovingInWater = true;
-                    //waterVerticalInput = 0f;//
                 }
             } else
             {
@@ -138,7 +138,6 @@ public class PlayerManager : MonoBehaviour
                 else
                 {
                     finishedMovingInWater = true;
-                    //waterHorizontalInput = 0f;//
                 }
             }
             
@@ -174,6 +173,9 @@ public class PlayerManager : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
+        if (!isPlaying)
+            return;
+
         if (collision.gameObject.CompareTag("Spike"))
         {
             if (hasStar)
@@ -183,13 +185,8 @@ public class PlayerManager : MonoBehaviour
                 hasStar = false;
                 isFirstStarMove = false;
                 undoScript.currentState.starWasLost = true;
-                //undoScript.currentState.playerPos = transform.position;
                 playerAnimator.enabled = true;
                 GameManager.Instance.FadeOutYellowVignette();
-                //playerSpriteRenderer.sprite = normalPlayerSprite;
-                //moveAmount = 1.5f;
-                //undoScript.SetState();
-                //isMakingMove = false;
             }
             else
             {
@@ -201,7 +198,9 @@ public class PlayerManager : MonoBehaviour
                 mobileVerticalInput = 0f;
                 horizontalInput = 0f;
                 verticalInput = 0f;
-                gameObject.SetActive(false);
+                //gameObject.SetActive(false);
+                SetPlayerActive(false);
+                playerSpriteRenderer.enabled = false;
             }
         } else if (collision.gameObject.CompareTag("Candy"))
         {
@@ -224,7 +223,9 @@ public class PlayerManager : MonoBehaviour
             isMakingMove = false;
             nonpersistentSoundSource.PlayOneShot(winSound);
             uiScript.ToggleWinPanel();
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
+            SetPlayerActive(false);
+            playerSpriteRenderer.enabled = false;
         }
 
         if (finishedMovingInWater && isMakingMove && (!isFirstStarMove || Physics2D.OverlapCircle(movePoint.position + lastDirection, .2f, stopsMovementLayer))) //&& !isFirstStarMove
@@ -253,34 +254,6 @@ public class PlayerManager : MonoBehaviour
             finishedMovingInWater = false;
             isFirstStarMove = false;
             StartCoroutine(WaterMove(new Vector3(horizontalInput * 1.5f, verticalInput * 1.5f, 0)));
-
-            /*
-            if (collision.gameObject.CompareTag("WaterDown"))
-            {
-                //isVerticalWater = true;
-                verticalInput = -1f;
-                horizontalInput = 0f;
-                StartCoroutine(WaterMove(new Vector3(0, -1.5f, 0)));
-            } else if (collision.gameObject.CompareTag("WaterUp"))
-            {
-                //isVerticalWater = true;
-                verticalInput = 1f;
-                horizontalInput = 0f;
-                StartCoroutine(WaterMove(new Vector3(0, 1.5f, 0)));
-            } else if (collision.gameObject.CompareTag("WaterLeft"))
-            {
-                //isVerticalWater = false;
-                verticalInput = 0f;
-                horizontalInput = -1f;
-                StartCoroutine(WaterMove(new Vector3(-1.5f, 0, 0)));
-            } else if (collision.gameObject.CompareTag("WaterRight"))
-            {
-                //isVerticalWater = false;
-                verticalInput = 0f;
-                horizontalInput = 1f;
-                StartCoroutine(WaterMove(new Vector3(1.5f, 0, 0)));
-            } 
-            */
         }
     }
 
@@ -291,5 +264,11 @@ public class PlayerManager : MonoBehaviour
         {
             nonpersistentSoundSource.PlayOneShot(waterSound);
         }
+    }
+
+    public void SetPlayerActive(bool isActive)
+    {
+        isPlaying = isActive;
+        //playerCollider.enabled = isActive;
     }
 }

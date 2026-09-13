@@ -12,13 +12,9 @@ public class DataManager : MonoBehaviour
     public int numberOfLevels;
 
     public bool isTimer, isMusicMute, isSoundMute, isOnMobile, doNotShowConfirm, firstTimePlaying;
-    public float musicVolume, soundVolume; //levelSelectPos
+    public float musicVolume, soundVolume;
     public int[] scoreArr;
     public float[] timeAnyArr, timeHundredArr;
-
-    //[SerializeField] Sprite[] hatSprites, faceSprites, bodySprites;
-    //[SerializeField] Toggle[] hatToggles, faceToggles, bodyToggles;
-    //int hatIndex, faceIndex, bodyIndex; // 0 means null sprite (no accessory)
 
     private void Awake()
     {
@@ -28,7 +24,6 @@ public class DataManager : MonoBehaviour
             return;
         }
         Instance = this;
-        //DontDestroyOnLoad(gameObject);
 
         if (PlayerPrefs.HasKey("levelSelectPos")) // If user has played before
         {
@@ -39,11 +34,6 @@ public class DataManager : MonoBehaviour
             doNotShowConfirm = (PlayerPrefs.GetInt("doNotShowConfirm") == 1);
             musicVolume = PlayerPrefs.GetFloat("musicVolume");
             soundVolume = PlayerPrefs.GetFloat("soundVolume");
-            //levelSelectPos = PlayerPrefs.GetFloat("levelSelectPos");
-
-            //hatIndex = PlayerPrefs.GetInt("hatIndex");
-            //faceIndex = PlayerPrefs.GetInt("faceIndex");
-            //bodyIndex = PlayerPrefs.GetInt("bodyIndex");
         } else
         {
             firstTimePlaying = true;
@@ -75,16 +65,6 @@ public class DataManager : MonoBehaviour
     
     public void SaveLevel()
     {
-        /*
-        PlayerPrefs.SetInt("isTimer", Convert.ToInt32(isTimer));
-        PlayerPrefs.SetInt("isMusicMute", Convert.ToInt32(isMusicMute));
-        PlayerPrefs.SetInt("isSoundMute", Convert.ToInt32(isSoundMute));
-        PlayerPrefs.SetInt("isOnMobile", Convert.ToInt32(isOnMobile));
-        PlayerPrefs.SetInt("doNotShowConfirm", Convert.ToInt32(doNotShowConfirm));
-        PlayerPrefs.SetFloat("musicVolume", musicVolume);
-        PlayerPrefs.SetFloat("soundVolume", soundVolume);
-        */
-        //PlayerPrefs.SetFloat("levelSelectPos", levelSelectPos);
         for (int i = 0; i < numberOfLevels; i++)
         {
             string levelIndex = i.ToString();
@@ -105,62 +85,8 @@ public class DataManager : MonoBehaviour
         };
     }
 
-    /*
-    public CosmeticSprites GetCosmeticSprites()
-    {
-        return new CosmeticSprites
-        {
-            hat = hatSprites[hatIndex],
-            face = faceSprites[faceIndex],
-            body = bodySprites[bodyIndex],
-            hatToggle = hatToggles[hatIndex], 
-            faceToggle = faceToggles[faceIndex],
-            bodyToggle = bodyToggles[bodyIndex]
-        };
-    }
-
-    public void SaveCosmetics(Sprite hatSprite, Sprite faceSprite, Sprite bodySprite)
-    {
-        if (hatSprite == null)
-        {
-            hatIndex = 0;
-        } else
-        {
-            hatIndex = System.Array.IndexOf(hatSprites, hatSprite);
-        }
-
-        if (faceSprite == null)
-        {
-            faceIndex = 0;
-        }
-        else
-        {
-            faceIndex = System.Array.IndexOf(faceSprites, faceSprite);
-        }
-
-        if (bodySprite == null)
-        {
-            bodyIndex = 0;
-        }
-        else
-        {
-            bodyIndex = System.Array.IndexOf(bodySprites, bodySprite);
-        }
-
-        PlayerPrefs.SetInt("hatIndex", hatIndex);
-        PlayerPrefs.SetInt("faceIndex", faceIndex);
-        PlayerPrefs.SetInt("bodyIndex", bodyIndex);
-
-        PlayerPrefs.Save();
-    }
-    */
-
     public void SaveCosmetics(int newHatIndex, int newFaceIndex, int newBodyIndex)
     {
-        //hatIndex = newHatIndex;
-        //faceIndex = newFaceIndex;
-        //bodyIndex = newBodyIndex;
-
         PlayerPrefs.SetInt("hatIndex", newHatIndex);
         PlayerPrefs.SetInt("faceIndex", newFaceIndex);
         PlayerPrefs.SetInt("bodyIndex", newBodyIndex);
@@ -203,28 +129,9 @@ public class DataManager : MonoBehaviour
     {
         return PlayerPrefs.GetFloat("levelSelectPos");
     }
-
-    /*
-    void Start()
-    {
-        Screen.autorotateToPortrait = false;
-        Screen.autorotateToPortraitUpsideDown = false;
-        Screen.autorotateToLandscapeLeft = true;
-        Screen.autorotateToLandscapeRight = true;
-        Screen.orientation = ScreenOrientation.AutoRotation;
-    }
-    */
 }
 
 public class CosmeticSprites
 {
     public int newHatIndex, newFaceIndex, newBodyIndex;
 }
-
-/*
-public class CosmeticSprites
-{
-    public Sprite hat, face, body;
-    public Toggle hatToggle, faceToggle, bodyToggle;
-}
-*/

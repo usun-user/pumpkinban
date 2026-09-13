@@ -12,7 +12,7 @@ public class UndoManager : MonoBehaviour
     [SerializeField] LevelUI uiScript;
     [SerializeField] PlayerManager playerScript;
 
-    public bool movedAfterUndo;
+    //public bool movedAfterUndo;
     public Button[] undoButtonArr;
 
     public GameState currentState;
@@ -22,10 +22,6 @@ public class UndoManager : MonoBehaviour
 
     void Start()
     {
-        /*
-        uiScript = canvas.GetComponent<LevelUI>();
-        playerScript = player.GetComponent<PlayerManager>();
-        */
         Setup();
     }
 
@@ -45,14 +41,14 @@ public class UndoManager : MonoBehaviour
             && !currentState.lastCandy 
             && !currentState.lastBox 
             && !currentState.lastStar
-            && !currentState.starWasLost) //&& !currentState.lastWeb // web not needed bc already covered by lastBox
+            && !currentState.starWasLost) // web not needed bc already covered by lastBox
         {
             return;
         }
 
         history.Push(currentState);
         currentState = new GameState();
-        movedAfterUndo = true;
+        //movedAfterUndo = true;
 
         if (history.Count == 1)
         {
@@ -85,8 +81,11 @@ public class UndoManager : MonoBehaviour
         Vector3 playerPos = lastState.playerPos;
         Vector3 boxPos = lastState.boxPos;
 
+        /*
         playerScript.enabled = false;
         playerScript.gameObject.SetActive(true);
+        */
+        playerScript.SetPlayerActive(false);
         uiScript.isPlaying = false;
 
         if (uiScript.won || uiScript.died)
@@ -124,19 +123,16 @@ public class UndoManager : MonoBehaviour
         }
         if (lastStar)
         {
-            //playerScript.moveAmount = 1.5f;
             playerScript.hasStar = false;
             playerScript.isFirstStarMove = false;
-            //playerScript.justGotStar = false;
             lastStar.SetActive(true);
             playerScript.playerAnimator.enabled = true;
             GameManager.Instance.FadeOutYellowVignette();
-            //playerScript.playerSpriteRenderer.sprite = playerScript.normalPlayerSprite;
+            //playerScript.playerSpriteRenderer.sprite = playerScript.normalPlayerSprite; // already done by playerAnimator
         } else if (lastState.starWasLost)
         {
             playerScript.hasStar = true;
             playerScript.isFirstStarMove = false;
-            //playerScript.justGotStar = true;
             playerScript.playerAnimator.enabled = false;
             playerScript.playerSpriteRenderer.sprite = playerScript.starPlayerSprite;
             GameManager.Instance.FadeInYellowVignette();
@@ -157,9 +153,14 @@ public class UndoManager : MonoBehaviour
         settingsPanel.SetActive(false);
         originalPanel.SetActive(true);
 
-        uiScript.isPlaying = true;
+        /*
         playerScript.enabled = true;
-        movedAfterUndo = false;
+        */
+        playerScript.SetPlayerActive(true);
+        playerScript.playerSpriteRenderer.enabled = true;
+        uiScript.isPlaying = true;
+
+        //movedAfterUndo = false;
 
         if (history.Count > 0)
         {
@@ -175,7 +176,7 @@ public class UndoManager : MonoBehaviour
 
     public void Down()
     {
-        if (undoCoroutine == null) //
+        if (undoCoroutine == null)
         {
             undoCoroutine = StartCoroutine(UndoWhileHeld());
         }

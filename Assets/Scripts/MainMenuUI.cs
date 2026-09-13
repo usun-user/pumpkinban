@@ -4,9 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Runtime.InteropServices;//
 
 public class MainMenuUI : MonoBehaviour
 {
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [DllImport("__Internal")]
+    private static extern int IsMobileDevice();
+#endif
+
+    // "#" (hash symbol) starts a preprocessor directive, meaning it tells the C# compiler to make a decision before compiling the code
+    // In this case it means "Only include this code (b/w the #) if we're building for WebGL and we are not running in the Unity Editor (or else the JavaScript mobile detection causes issues)"
+
     [SerializeField] GameObject currentPanel, currentSubPanel, settingsPanel, levelPanel, cosmeticPanel, soundButton, musicButton, timerButton, quitButton, mainMenuBG, cosmeticReturnButton, cosmeticSubReturnButton;
     [SerializeField] TextMeshProUGUI[] scoreTextArr, timerAnyTextArr, timerHundredTextArr;
     [SerializeField] TextMeshProUGUI timerToggleText, mobileToggleText;
@@ -20,6 +29,15 @@ public class MainMenuUI : MonoBehaviour
     AudioSource persistentSoundSource, nonpersistentSoundSource, mainMenuMusicSource, levelMusicSource;
     GameObject previousPanel, previousSubPanel;
     bool hasChangedSettings;
+
+    private bool DetectMobileDevice()
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+    return IsMobileDevice() == 1;
+#else
+        return Application.isMobilePlatform;
+#endif
+    }
 
     void Start()
     {
@@ -104,7 +122,10 @@ public class MainMenuUI : MonoBehaviour
             }
         }
 
-        if (DataManager.Instance.firstTimePlaying && (Input.touchSupported || Application.isMobilePlatform))
+        /*
+        //Application.platform == RuntimePlatform.IPhonePlayer <--- is not useful
+        //Input.touchSupported <--- causes laptop to also be detected as mobile
+        if (DataManager.Instance.firstTimePlaying && Application.isMobilePlatform)
         {
             DataManager.Instance.isOnMobile = true;
             DataManager.Instance.SaveMobileState();
@@ -119,6 +140,24 @@ public class MainMenuUI : MonoBehaviour
         {
             mobileToggleText.text = "Mobile: off";
         }
+        */
+
+        if (DataManager.Instance.firstTimePlaying)
+        {
+            DataManager.Instance.isOnMobile = DetectMobileDevice();
+            DataManager.Instance.SaveMobileState();
+            DataManager.Instance.firstTimePlaying = false;
+        }
+
+        if (DataManager.Instance.isOnMobile)
+        {
+            mobileToggleText.text = "Mobile: on";
+        }
+        else
+        {
+            mobileToggleText.text = "Mobile: off";
+        }
+
 
         levelSelectScrollRect.horizontalNormalizedPosition = DataManager.Instance.GetLevelSelectPos();
 
@@ -143,26 +182,6 @@ public class MainMenuUI : MonoBehaviour
                 ChangePanel(settingsPanel);
             }
         }
-
-        //Shouldn't need bc already updated in Start() and On_SliderChanged()
-        /*
-        if (!GameManager.Instance.isFadingMusic)
-        {
-            DataManager.Instance.musicVolume = mainMenuMusicSource.volume;
-            DataManager.Instance.soundVolume = persistentSoundSource.volume;
-        }
-        */
-
-        //Shouldn't need bc already updated in Start() and ToggleMobileMode()
-        /*
-        if (DataManager.Instance.isOnMobile)
-        {
-            mobileToggleText.text = "Mobile: on";
-        } else
-        {
-            mobileToggleText.text = "Mobile: off";
-        }
-        */
     }
 
     public void ChangePanel(GameObject newPanel)
@@ -193,11 +212,8 @@ public class MainMenuUI : MonoBehaviour
         currentSubPanel.SetActive(false);
         persistentSoundSource.PlayOneShot(buttonSound);
 
-        //if (currentPanel == cosmeticPanel)
-        //{
         cosmeticReturnButton.SetActive(false);
         cosmeticSubReturnButton.SetActive(true);
-        //}
 
         previousSubPanel = currentSubPanel;
         currentSubPanel = newSubPanel;
@@ -215,7 +231,6 @@ public class MainMenuUI : MonoBehaviour
         {
             hasChangedSettings = false;
             DataManager.Instance.SaveSettings();
-            //DataManager.Instance.SaveMobileState();
         } else if ((currentPanel == cosmeticPanel) && cosmeticScript.hasChangedCosmetics)
         {
             cosmeticScript.SaveCurrentCosmetics();
@@ -231,8 +246,8 @@ public class MainMenuUI : MonoBehaviour
         currentSubPanel = previousSubPanel;
         previousSubPanel.SetActive(true);
 
-        cosmeticSubReturnButton.SetActive(false); //
-        cosmeticReturnButton.SetActive(true); //
+        cosmeticSubReturnButton.SetActive(false);
+        cosmeticReturnButton.SetActive(true);
     }
 
     public void PlayLevel(string levelName)
@@ -283,13 +298,13 @@ public class MainMenuUI : MonoBehaviour
         {
             soundButton.GetComponent<Image>().sprite = soundOnSprite;
             persistentSoundSource.mute = false;
-            nonpersistentSoundSource.mute = false;//
+            nonpersistentSoundSource.mute = false;
             DataManager.Instance.isSoundMute = false;
         } else
         {
             soundButton.GetComponent<Image>().sprite = soundOffSprite;
             persistentSoundSource.mute = true;
-            nonpersistentSoundSource.mute = true;//
+            nonpersistentSoundSource.mute = true;
             DataManager.Instance.isSoundMute = true;
         }
         hasChangedSettings = true;
@@ -301,13 +316,13 @@ public class MainMenuUI : MonoBehaviour
         {
             musicButton.GetComponent<Image>().sprite = musicOnSprite;
             mainMenuMusicSource.mute = false;
-            levelMusicSource.mute = false;//
+            levelMusicSource.mute = false;
             DataManager.Instance.isMusicMute = false;
         } else
         {
             musicButton.GetComponent<Image>().sprite = musicOffSprite;
             mainMenuMusicSource.mute = true;
-            levelMusicSource.mute = true;//
+            levelMusicSource.mute = true;
             DataManager.Instance.isMusicMute = true;
         }
         hasChangedSettings = true;
@@ -316,7 +331,7 @@ public class MainMenuUI : MonoBehaviour
     public void OnSoundSliderChanged()
     {
         persistentSoundSource.volume = soundSlider.value;
-        nonpersistentSoundSource.volume = soundSlider.value;//
+        nonpersistentSoundSource.volume = soundSlider.value;
         DataManager.Instance.soundVolume = soundSlider.value;
         hasChangedSettings = true;
     }
@@ -324,7 +339,7 @@ public class MainMenuUI : MonoBehaviour
     public void OnMusicSliderChanged()
     {
         mainMenuMusicSource.volume = musicSlider.value;
-        levelMusicSource.volume = musicSlider.value;//
+        levelMusicSource.volume = musicSlider.value;
         DataManager.Instance.musicVolume = musicSlider.value;
         hasChangedSettings = true;
     }
@@ -336,7 +351,7 @@ public class MainMenuUI : MonoBehaviour
         if (DataManager.Instance.isOnMobile)
         {
             mobileToggleText.text = "Mobile: on";
-            Screen.fullScreen = true;
+            //Screen.fullScreen = true;
         } else
         {
             mobileToggleText.text = "Mobile: off";

@@ -1608,6 +1608,7 @@ MonoBehaviour:
   winSound: {fileID: 8300000, guid: bef49b3910d595b4d966e7de74c54aca, type: 3}
   starSound: {fileID: 8300000, guid: 597d28af9c738f849a0ded82a5c4abf9, type: 3}
   hurtSound: {fileID: 8300000, guid: dbc025839e63fd24aa5377f358ac02b8, type: 3}
+  playerCollider: {fileID: 182938887}
   uiScript: {fileID: 8457706778626765642}
   undoScript: {fileID: 1768511268}
   movePoint: {fileID: 1986615447}
@@ -4068,7 +4069,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29b1ce558a34c734691f3ce2abedc563, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentScene: MainMenu
   levelCanvas: {fileID: 3784214783054408311}
   sceneTransitionCanvas: {fileID: 740638986}
   buttonSound: {fileID: 8300000, guid: 5d5880eb3ab8b3746a9b22e674198495, type: 3}
@@ -4084,16 +4084,17 @@ MonoBehaviour:
   levelMusicSource: {fileID: 1248725684}
   player: {fileID: 182938882}
   spawnPos: {x: 0, y: 0, z: 0}
+  hat: {fileID: 1581716527}
+  face: {fileID: 603154627}
+  body: {fileID: 563986668}
   isLevelSelect: 0
   isSwitchingScene: 0
   isFadingMusic: 0
+  currentScene: MainMenu
   playerScript: {fileID: 182938885}
   levelUIScript: {fileID: 8457706778626765642}
   cameraFollowScript: {fileID: 1352301680}
   undoScript: {fileID: 1768511268}
-  hat: {fileID: 1581716527}
-  face: {fileID: 603154627}
-  body: {fileID: 563986668}
 --- !u!4 &587733662
 Transform:
   m_ObjectHideFlags: 0
@@ -9886,7 +9887,6 @@ MonoBehaviour:
   buttonSound: {fileID: 8300000, guid: 5d5880eb3ab8b3746a9b22e674198495, type: 3}
   uiScript: {fileID: 8457706778626765642}
   playerScript: {fileID: 182938885}
-  movedAfterUndo: 0
   undoButtonArr:
   - {fileID: 1139616199}
   - {fileID: 678252345}
@@ -11781,12 +11781,9 @@ MonoBehaviour:
   doNotRestartConfirmToggle: {fileID: 1109081459}
   playerScript: {fileID: 182938885}
   undoScript: {fileID: 1768511268}
-  movedAfterUndo: 0
   died: 0
   won: 0
   isPlaying: 1
-  currentScore: 0
-  currentTime: 0
   sceneName: 
 --- !u!114 &8942346236286897454
 MonoBehaviour:

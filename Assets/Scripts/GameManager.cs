@@ -9,24 +9,23 @@ public class GameManager : MonoBehaviour
     // global singleton that any script can access by saying "GameManager.Instance.MyMethod()"
     public static GameManager Instance;
 
-    public string currentScene;
-
-    [SerializeField] GameObject levelCanvas, sceneTransitionCanvas; //levelCamera, undoManager
+    [SerializeField] GameObject levelCanvas, sceneTransitionCanvas;
     [SerializeField] AudioClip buttonSound, mainMenuMusic, levelMusic;
     [SerializeField] Transform movePoint;
     [SerializeField] Image sceneFade, yellowVignette;
     [SerializeField] float visualFadeDuration;
+
     public AudioSource persistentSoundSource, nonpersistentSoundSource, mainMenuMusicSource, levelMusicSource;
     public GameObject player;
     public Vector3 spawnPos;
+    public SpriteRenderer hat, face, body;
     public bool isLevelSelect, isSwitchingScene, isFadingMusic;
+    public string currentScene;
 
     [SerializeField] PlayerManager playerScript;
     public LevelUI levelUIScript;
     public CameraFollow cameraFollowScript;
     public UndoManager undoScript;
-
-    public SpriteRenderer hat, face, body;
 
     private void Awake()
     {
@@ -37,19 +36,9 @@ public class GameManager : MonoBehaviour
             return;
         }
         Instance = this;
-        //DontDestroyOnLoad(gameObject);
 
-        
         SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Additive);
         currentScene = "MainMenu";
-        //DisableCoreScene();
-
-        /*
-        playerScript = player.GetComponent<PlayerManager>();
-        levelUIScript = levelCanvas.GetComponent<LevelUI>();
-        cameraFollowScript = levelCamera.GetComponent<CameraFollow>();
-        undoScript = undoManager.GetComponent<UndoManager>();
-        */
     }
 
     public void DisableCoreScene()
@@ -62,18 +51,6 @@ public class GameManager : MonoBehaviour
         levelCanvas.SetActive(true);
         //ResetLevel(); // SpawnPoint script already does this
     }
-
-    /*
-    public void SwitchScene(string newScene)
-    {
-        persistentSoundSource.PlayOneShot(buttonSound);
-        SceneManager.UnloadSceneAsync(currentScene);
-        SceneManager.LoadSceneAsync(newScene, LoadSceneMode.Additive);
-        currentScene = newScene;
-        levelUIScript.sceneName = currentScene;
-        nonpersistentSoundSource.Stop();
-    }
-    */
 
     public void SwitchScene(string newScene)
     {
@@ -186,26 +163,22 @@ public class GameManager : MonoBehaviour
     {
         undoScript.Setup();
 
-        playerScript.enabled = false; //
+        //playerScript.enabled = false;
 
         player.transform.position = spawnPos;
         movePoint.position = spawnPos;
 
-        playerScript.finishedMovingInWater = true; // = false
-        //playerScript.isVerticalWater = false;
+        /*
+        playerScript.finishedMovingInWater = true;
         playerScript.isMakingMove = false;
         playerScript.candy = 0;
         playerScript.hasStar = false;
         playerScript.isFirstStarMove = false;
-        //playerScript.justGotStar = false;
         playerScript.horizontalInput = 0f;
         playerScript.verticalInput = 0f;
-        //playerScript.waterHorizontalInput = 0f;
-        //playerScript.waterVerticalInput = 0f;
         playerScript.mobileHorizontalInput = 0f;
         playerScript.mobileVerticalInput = 0f;
         playerScript.playerAnimator.enabled = true;
-        //playerScript.playerSpriteRenderer.sprite = playerScript.normalPlayerSprite;
 
         levelUIScript.movedAfterUndo = false;
         levelUIScript.isPlaying = true;
@@ -221,13 +194,12 @@ public class GameManager : MonoBehaviour
         levelUIScript.infoPanel.SetActive(false);
         levelUIScript.restartConfirmPanel.SetActive(false);
         levelUIScript.restartConfirmBG.SetActive(false);
-        //levelUIScript.mobilePanel.SetActive(); // done in LevelUI update
-        levelUIScript.Setup();
+        */
+
+        playerScript.Setup(); //
+        levelUIScript.Setup(); //
 
         yellowVignette.gameObject.SetActive(false);
-
-        // Should make much cleaner Setup() methods for LevelUI, MainMenuUI, and PlayerManager
-        // also make UI scripts only focus on UI, moving the Undo logic away from it
 
         levelMusicSource.UnPause();
 
