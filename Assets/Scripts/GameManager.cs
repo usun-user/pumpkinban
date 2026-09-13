@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
 
     public string currentScene;
 
-    [SerializeField] GameObject levelCamera, levelCanvas, sceneTransitionCanvas, undoManager;
+    [SerializeField] GameObject levelCanvas, sceneTransitionCanvas; //levelCamera, undoManager
     [SerializeField] AudioClip buttonSound, mainMenuMusic, levelMusic;
     [SerializeField] Transform movePoint;
     [SerializeField] Image sceneFade, yellowVignette;
@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     public Vector3 spawnPos;
     public bool isLevelSelect, isSwitchingScene;
 
-    PlayerManager playerScript;
+    [SerializeField] PlayerManager playerScript;
     public LevelUI levelUIScript;
     public CameraFollow cameraFollowScript;
     public UndoManager undoScript;
@@ -44,11 +44,12 @@ public class GameManager : MonoBehaviour
         currentScene = "MainMenu";
         //DisableCoreScene();
 
-
+        /*
         playerScript = player.GetComponent<PlayerManager>();
         levelUIScript = levelCanvas.GetComponent<LevelUI>();
         cameraFollowScript = levelCamera.GetComponent<CameraFollow>();
         undoScript = undoManager.GetComponent<UndoManager>();
+        */
     }
 
     public void DisableCoreScene()

@@ -1594,8 +1594,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  canvas: {fileID: 3784214783054408311}
-  undoManager: {fileID: 1768511267}
   stopsMovementLayer:
     serializedVersion: 2
     m_Bits: 320
@@ -1610,6 +1608,8 @@ MonoBehaviour:
   winSound: {fileID: 8300000, guid: bef49b3910d595b4d966e7de74c54aca, type: 3}
   starSound: {fileID: 8300000, guid: 597d28af9c738f849a0ded82a5c4abf9, type: 3}
   hurtSound: {fileID: 8300000, guid: dbc025839e63fd24aa5377f358ac02b8, type: 3}
+  uiScript: {fileID: 8457706778626765642}
+  undoScript: {fileID: 1768511268}
   movePoint: {fileID: 1986615447}
   finishedMovingInWater: 1
   isMakingMove: 0
@@ -2193,9 +2193,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9653d8705be9dae4e892e4774767bcb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 182938882}
   thisHorizontalInput: 0
   thisVerticalInput: -1
+  playerScript: {fileID: 182938885}
 --- !u!114 &211370709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2507,55 +2507,6 @@ RectTransform:
   m_AnchoredPosition: {x: 104.185425, y: 0}
   m_SizeDelta: {x: 188.13715, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &279975190
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 279975191}
-  - component: {fileID: 279975192}
-  m_Layer: 5
-  m_Name: MobileSwipe
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &279975191
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 279975190}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 904107547}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &279975192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 279975190}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d53ab53cfa00ec4459b9ccfa672777c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 182938882}
 --- !u!1 &322967529
 GameObject:
   m_ObjectHideFlags: 0
@@ -4118,10 +4069,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentScene: MainMenu
-  levelCamera: {fileID: 1352301676}
   levelCanvas: {fileID: 3784214783054408311}
   sceneTransitionCanvas: {fileID: 740638986}
-  undoManager: {fileID: 1768511267}
   buttonSound: {fileID: 8300000, guid: 5d5880eb3ab8b3746a9b22e674198495, type: 3}
   mainMenuMusic: {fileID: 8300000, guid: f1be7b406cee5ba46b3ccc8f1e7a4664, type: 3}
   levelMusic: {fileID: 8300000, guid: cb812398a411629449c23202a02c015e, type: 3}
@@ -4137,6 +4086,7 @@ MonoBehaviour:
   spawnPos: {x: 0, y: 0, z: 0}
   isLevelSelect: 0
   isSwitchingScene: 0
+  playerScript: {fileID: 182938885}
   levelUIScript: {fileID: 8457706778626765642}
   cameraFollowScript: {fileID: 1352301680}
   undoScript: {fileID: 1768511268}
@@ -5388,6 +5338,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 904107547}
+  - component: {fileID: 904107548}
   m_Layer: 5
   m_Name: MobilePanel
   m_TagString: Untagged
@@ -5411,7 +5362,6 @@ RectTransform:
   - {fileID: 211370704}
   - {fileID: 1418024383}
   - {fileID: 1069203991}
-  - {fileID: 279975191}
   m_Father: {fileID: 386229738}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
@@ -5419,6 +5369,20 @@ RectTransform:
   m_AnchoredPosition: {x: -20, y: 20}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 1, y: 0}
+--- !u!114 &904107548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904107546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d53ab53cfa00ec4459b9ccfa672777c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minSwipeDistance: 40
+  playerScript: {fileID: 182938885}
 --- !u!1 &916597782
 GameObject:
   m_ObjectHideFlags: 0
@@ -6000,9 +5964,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9653d8705be9dae4e892e4774767bcb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 182938882}
   thisHorizontalInput: 1
   thisVerticalInput: 0
+  playerScript: {fileID: 182938885}
 --- !u!114 &1069203996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8113,9 +8077,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9653d8705be9dae4e892e4774767bcb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 182938882}
   thisHorizontalInput: 0
   thisVerticalInput: 1
+  playerScript: {fileID: 182938885}
 --- !u!114 &1418024388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8716,9 +8680,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9653d8705be9dae4e892e4774767bcb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 182938882}
   thisHorizontalInput: -1
   thisVerticalInput: 0
+  playerScript: {fileID: 182938885}
 --- !u!114 &1554007536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9909,8 +9873,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 950f6c6aa0753e74da89aacb7ed009b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvas: {fileID: 3784214783054408311}
-  player: {fileID: 182938882}
   originalPanel: {fileID: 386229737}
   deathPanel: {fileID: 6630778752164083125}
   winPanel: {fileID: 4011940657458732055}
@@ -9920,6 +9882,8 @@ MonoBehaviour:
   nonpersistentSoundSource: {fileID: 1077850588}
   levelMusicSource: {fileID: 1248725684}
   buttonSound: {fileID: 8300000, guid: 5d5880eb3ab8b3746a9b22e674198495, type: 3}
+  uiScript: {fileID: 8457706778626765642}
+  playerScript: {fileID: 182938885}
   movedAfterUndo: 0
   undoButtonArr:
   - {fileID: 1139616199}
@@ -11784,7 +11748,6 @@ MonoBehaviour:
   timerButton: {fileID: 753313311}
   mobileButton: {fileID: 1730747514}
   infoButton: {fileID: 83154830}
-  undoManager: {fileID: 1768511267}
   yellowVignetteObj: {fileID: 690794592}
   scoreTextArr:
   - {fileID: 2070357110}
@@ -11813,6 +11776,8 @@ MonoBehaviour:
   musicSlider: {fileID: 1937220596}
   restartConfirmSettingsToggle: {fileID: 542411691}
   doNotRestartConfirmToggle: {fileID: 1109081459}
+  playerScript: {fileID: 182938885}
+  undoScript: {fileID: 1768511268}
   movedAfterUndo: 0
   died: 0
   won: 0

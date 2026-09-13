@@ -10,7 +10,7 @@ using System;
 public class LevelUI : MonoBehaviour
 {
     public GameObject originalPanel, deathPanel, winPanel, settingsPanel, infoPanel, mobilePanel, restartConfirmPanel, restartConfirmBG; // use "[SerializeField]" instead of "public" in future by making Setup() here that doesn't need GameManager
-    [SerializeField] GameObject player, soundButton, musicButton, timerButton, mobileButton, infoButton, undoManager, yellowVignetteObj;
+    [SerializeField] GameObject player, soundButton, musicButton, timerButton, mobileButton, infoButton, yellowVignetteObj; //undoManager
     [SerializeField] TextMeshProUGUI[] scoreTextArr, timerTextArr;
     [SerializeField] TextMeshProUGUI timerToggleText;
     [SerializeField] Sprite soundOnSprite, soundOffSprite, musicOnSprite, musicOffSprite, timerOnSprite, timerOffSprite, mobileOnSprite, mobileOffSprite;
@@ -18,9 +18,8 @@ public class LevelUI : MonoBehaviour
     [SerializeField] AudioClip buttonSound;
     [SerializeField] Slider soundSlider, musicSlider;
     [SerializeField] Toggle restartConfirmSettingsToggle, doNotRestartConfirmToggle;
-
-    PlayerManager playerScript;
-    UndoManager undoScript;
+    [SerializeField] PlayerManager playerScript;
+    [SerializeField] UndoManager undoScript;
     
     public bool movedAfterUndo, died, won, isPlaying = true;
     public int currentScore;
@@ -75,8 +74,10 @@ public class LevelUI : MonoBehaviour
             timerButton.GetComponent<Image>().sprite = timerOnSprite;
         }
 
+        /*
         playerScript = player.GetComponent<PlayerManager>();
         undoScript = undoManager.GetComponent<UndoManager>();
+        */
 
         hasChangedSettings = false;
     }

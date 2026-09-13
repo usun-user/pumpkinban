@@ -6,14 +6,16 @@ using UnityEngine.UI;
 
 public class MobileButtonManager : MonoBehaviour//, IPointerDownHandler, IPointerUpHandler
 {
-    [SerializeField] GameObject player;
-    PlayerManager playerScript;
     [SerializeField] float thisHorizontalInput, thisVerticalInput;
+    //[SerializeField] GameObject player;
+    [SerializeField] PlayerManager playerScript;
 
+    /*
     void Start()
     {
         playerScript = player.GetComponent<PlayerManager>();
     }
+    */
 
     //public void OnPointerDown(PointerEventData eventData)
     public void Down()

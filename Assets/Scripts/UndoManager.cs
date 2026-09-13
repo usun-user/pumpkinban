@@ -6,15 +6,14 @@ using UnityEngine.UI;
 
 public class UndoManager : MonoBehaviour
 {
-    [SerializeField] GameObject canvas, player, originalPanel, deathPanel, winPanel, settingsPanel, infoPanel;
+    [SerializeField] GameObject originalPanel, deathPanel, winPanel, settingsPanel, infoPanel; //canvas, player
     [SerializeField] AudioSource persistentSoundSource, nonpersistentSoundSource, levelMusicSource;
     [SerializeField] AudioClip buttonSound;
+    [SerializeField] LevelUI uiScript;
+    [SerializeField] PlayerManager playerScript;
 
     public bool movedAfterUndo;
     public Button[] undoButtonArr;
-
-    LevelUI uiScript;
-    PlayerManager playerScript;
 
     public GameState currentState;
     Stack<GameState> history;
@@ -23,8 +22,10 @@ public class UndoManager : MonoBehaviour
 
     void Start()
     {
+        /*
         uiScript = canvas.GetComponent<LevelUI>();
         playerScript = player.GetComponent<PlayerManager>();
+        */
         Setup();
     }
 

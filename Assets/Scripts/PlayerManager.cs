@@ -7,12 +7,12 @@ using UnityEngine.Audio;
 public class PlayerManager : MonoBehaviour
 {
     [SerializeField] float moveSpeed;
-    [SerializeField] GameObject canvas, undoManager;
+    //[SerializeField] GameObject canvas, undoManager;
     [SerializeField] LayerMask stopsMovementLayer, boxLayer;
     [SerializeField] AudioSource nonpersistentSoundSource;
     [SerializeField] AudioClip candySound, grassSound, waterSound, gameOverSound, winSound, starSound, hurtSound;
-    LevelUI uiScript;
-    UndoManager undoScript;
+    [SerializeField] LevelUI uiScript;
+    [SerializeField] UndoManager undoScript;
 
     public Transform movePoint;
     public bool finishedMovingInWater, isMakingMove, isFirstStarMove, hasStar; //isVerticalWater //justGotStar
@@ -26,8 +26,10 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
+        /*
         uiScript = canvas.GetComponent<LevelUI>();
         undoScript = undoManager.GetComponent<UndoManager>();
+        */
         movePoint.parent = null;
         //finishedMovingInWater = true;
     }
