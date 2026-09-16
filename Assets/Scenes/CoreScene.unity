@@ -1608,7 +1608,6 @@ MonoBehaviour:
   winSound: {fileID: 8300000, guid: bef49b3910d595b4d966e7de74c54aca, type: 3}
   starSound: {fileID: 8300000, guid: 597d28af9c738f849a0ded82a5c4abf9, type: 3}
   hurtSound: {fileID: 8300000, guid: dbc025839e63fd24aa5377f358ac02b8, type: 3}
-  playerCollider: {fileID: 182938887}
   uiScript: {fileID: 8457706778626765642}
   undoScript: {fileID: 1768511268}
   movePoint: {fileID: 1986615447}
