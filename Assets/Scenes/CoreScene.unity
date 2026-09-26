@@ -4380,7 +4380,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c7518c6a41720244a8711d7e0d21eb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfLevels: 10
+  numberOfLevels: 15
   isTimer: 0
   isMusicMute: 0
   isSoundMute: 0
@@ -4389,7 +4389,7 @@ MonoBehaviour:
   firstTimePlaying: 0
   musicVolume: 0.5
   soundVolume: 0.5
-  scoreArr: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
+  scoreArr: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   timeAnyArr:
   - 3599
   - 3599
@@ -4401,7 +4401,17 @@ MonoBehaviour:
   - 3599
   - 3599
   - 3599
+  - 3599
+  - 3599
+  - 3599
+  - 3599
+  - 3599
   timeHundredArr:
+  - 3599
+  - 3599
+  - 3599
+  - 3599
+  - 3599
   - 3599
   - 3599
   - 3599

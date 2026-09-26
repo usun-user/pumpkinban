@@ -15,7 +15,7 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] UndoManager undoScript;
 
     public Transform movePoint;
-    public bool finishedMovingInWater, isMakingMove, isFirstStarMove, hasStar;
+    public bool isMovingInWater, isMakingMove, isFirstStarMove, hasStar, isSpikeMove; //isSpikeMove is needed to prevent extra water push after spike bounce
     public int candy;
     public float horizontalInput, verticalInput, mobileHorizontalInput, mobileVerticalInput; //1 = right/up, -1 = left/down
     public Sprite starPlayerSprite; //don't need normalPlayerSprite bc animator automatically shows normalPlayerSprite
@@ -25,6 +25,8 @@ public class PlayerManager : MonoBehaviour
     Vector3 lastDirection;
     bool isPlaying;
 
+    Coroutine waterCoroutine;
+
     void Start()
     {
         movePoint.parent = null;
@@ -32,17 +34,25 @@ public class PlayerManager : MonoBehaviour
 
     public void Setup()
     {
-        finishedMovingInWater = true;
+        isMovingInWater = false; //finishedMovingInWater = true;
         isMakingMove = false;
         candy = 0;
         hasStar = false;
         isFirstStarMove = false;
+        isSpikeMove = false;//
         horizontalInput = 0f;
         verticalInput = 0f;
         mobileHorizontalInput = 0f;
         mobileVerticalInput = 0f;
         playerAnimator.enabled = true;
         playerSpriteRenderer.enabled = true;
+
+        if (waterCoroutine != null)
+        {
+            StopCoroutine(waterCoroutine);
+            waterCoroutine = null;
+        }
+
         SetPlayerActive(true);
     }
 
@@ -51,17 +61,23 @@ public class PlayerManager : MonoBehaviour
         if (!isPlaying)
             return;
 
-        if (finishedMovingInWater)
+        if (!isMovingInWater) //if(finishedMovingInWater)
         {
             transform.position = Vector3.MoveTowards(transform.position, movePoint.position, moveSpeed * Time.deltaTime);
             if (Vector3.Distance(transform.position, movePoint.position) <= .05f)
             {
                 transform.position = movePoint.position;
-                if (isFirstStarMove)
+                
+                if (isSpikeMove) //
+                {
+                    isSpikeMove = false;//
+                }
+                else if (isFirstStarMove)
                 {
                     isFirstStarMove = false;
                     Move(lastDirection); //move in same direction as last time
-                } else
+                }
+                else
                 {
                     if (isMakingMove)
                     {
@@ -74,7 +90,8 @@ public class PlayerManager : MonoBehaviour
                     {
                         horizontalInput = Input.GetAxisRaw("Horizontal");
                         verticalInput = Input.GetAxisRaw("Vertical");
-                    } else
+                    }
+                    else
                     {
                         horizontalInput = mobileHorizontalInput;
                         verticalInput = mobileVerticalInput;
@@ -123,7 +140,7 @@ public class PlayerManager : MonoBehaviour
                 }
                 else
                 {
-                    finishedMovingInWater = true;
+                    isMovingInWater = false; //finishedMovingInWater = true;
                 }
             } else
             {
@@ -137,7 +154,7 @@ public class PlayerManager : MonoBehaviour
                 }
                 else
                 {
-                    finishedMovingInWater = true;
+                    isMovingInWater = false; //finishedMovingInWater = true;
                 }
             }
             
@@ -150,7 +167,7 @@ public class PlayerManager : MonoBehaviour
         Collider2D pushableCollider = Physics2D.OverlapCircle(movePoint.position + changeInPosition, .2f, boxLayer);
         if (pushableCollider)
         {
-            if (finishedMovingInWater)
+            if (!isMovingInWater) //finishedMovingInWater
             {
                 PushManager pushScript = pushableCollider.GetComponent<PushManager>();
                 boxMoved = pushScript.Push(changeInPosition);
@@ -180,13 +197,25 @@ public class PlayerManager : MonoBehaviour
         {
             if (hasStar)
             {
+                if (waterCoroutine != null)
+                {
+                    StopCoroutine(waterCoroutine);
+                    waterCoroutine = null;
+                }
+                //finishedMovingInWater = true;
+                isMovingInWater = false;
+                isSpikeMove = true;
+
                 nonpersistentSoundSource.PlayOneShot(hurtSound);
-                Move(new Vector3(horizontalInput * (-1.5f), verticalInput * (-1.5f), 0));
+                //Move(new Vector3(horizontalInput * (-1.5f), verticalInput * (-1.5f), 0));
+                Move(-lastDirection);
                 hasStar = false;
                 isFirstStarMove = false;
                 undoScript.currentState.starWasLost = true;
                 playerAnimator.enabled = true;
                 GameManager.Instance.FadeOutYellowVignette();
+
+                //return; //Cannot return bc would stop new water movement for if player ends up on water after spike bounce
             }
             else
             {
@@ -227,8 +256,8 @@ public class PlayerManager : MonoBehaviour
             SetPlayerActive(false);
             playerSpriteRenderer.enabled = false;
         }
-
-        if (finishedMovingInWater && isMakingMove && (!isFirstStarMove || Physics2D.OverlapCircle(movePoint.position + lastDirection, .2f, stopsMovementLayer))) //&& !isFirstStarMove
+        //finishedMovingInWater
+        if (!isSpikeMove && !isMovingInWater && isMakingMove && (!isFirstStarMove || Physics2D.OverlapCircle(movePoint.position + lastDirection, .2f, stopsMovementLayer)))
         {
             if (collision.gameObject.CompareTag("WaterDown"))
             {
@@ -251,9 +280,10 @@ public class PlayerManager : MonoBehaviour
                 return;
             }
 
-            finishedMovingInWater = false;
+            //finishedMovingInWater = false;
+            isMovingInWater = true;
             isFirstStarMove = false;
-            StartCoroutine(WaterMove(new Vector3(horizontalInput * 1.5f, verticalInput * 1.5f, 0)));
+            waterCoroutine = StartCoroutine(WaterMove(new Vector3(horizontalInput * 1.5f, verticalInput * 1.5f, 0)));
         }
     }
 
@@ -264,6 +294,7 @@ public class PlayerManager : MonoBehaviour
         {
             nonpersistentSoundSource.PlayOneShot(waterSound);
         }
+        waterCoroutine = null;
     }
 
     public void SetPlayerActive(bool isActive)
