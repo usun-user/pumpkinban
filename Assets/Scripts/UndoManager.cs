@@ -114,7 +114,7 @@ public class UndoManager : MonoBehaviour
 
         if (lastCandy)
         {
-            playerScript.candy--;
+            playerScript.DecrementCandy();
             lastCandy.SetActive(true);
         }
         if (lastWeb)

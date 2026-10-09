@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8437108993438081136}
   - component: {fileID: 365134102515520255}
   - component: {fileID: 6595593817605572672}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: WaterUp
   m_TagString: WaterUp
   m_Icon: {fileID: 0}

@@ -7,7 +7,7 @@ using UnityEngine.Audio;
 public class PlayerManager : MonoBehaviour
 {
     [SerializeField] float moveSpeed;
-    [SerializeField] LayerMask stopsMovementLayer, boxLayer;
+    [SerializeField] LayerMask stopsMovementLayer, boxLayer; //waterLayer //water layer is new
     [SerializeField] AudioSource nonpersistentSoundSource;
     [SerializeField] AudioClip candySound, grassSound, waterSound, gameOverSound, winSound, starSound, hurtSound;
     //[SerializeField] BoxCollider2D playerCollider;
@@ -15,15 +15,16 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] UndoManager undoScript;
 
     public Transform movePoint;
-    public bool isMovingInWater, isMakingMove, isFirstStarMove, hasStar, isSpikeMove; //isSpikeMove is needed to prevent extra water push after spike bounce
-    public int candy;
+    public bool isMovingInWater, isMakingMove, isFirstStarMove, hasStar;
+    //public int candy;
     public float horizontalInput, verticalInput, mobileHorizontalInput, mobileVerticalInput; //1 = right/up, -1 = left/down
     public Sprite starPlayerSprite; //don't need normalPlayerSprite bc animator automatically shows normalPlayerSprite
     public SpriteRenderer playerSpriteRenderer;
     public Animator playerAnimator;
 
-    Vector3 lastDirection;
-    bool isPlaying;
+    Vector3 lastInputDirection, lastGeneralDirection;
+    bool isPlaying, isSpikeMove, secondStarMoveFailed; //isSpikeMove is needed to prevent extra water push after spike bounce
+    int candy;
 
     Coroutine waterCoroutine;
 
@@ -40,6 +41,7 @@ public class PlayerManager : MonoBehaviour
         hasStar = false;
         isFirstStarMove = false;
         isSpikeMove = false;//
+        secondStarMoveFailed = false;//
         horizontalInput = 0f;
         verticalInput = 0f;
         mobileHorizontalInput = 0f;
@@ -67,7 +69,8 @@ public class PlayerManager : MonoBehaviour
             if (Vector3.Distance(transform.position, movePoint.position) <= .05f)
             {
                 transform.position = movePoint.position;
-                
+                secondStarMoveFailed = false;
+
                 if (isSpikeMove) //
                 {
                     isSpikeMove = false;//
@@ -75,7 +78,14 @@ public class PlayerManager : MonoBehaviour
                 else if (isFirstStarMove)
                 {
                     isFirstStarMove = false;
-                    Move(lastDirection); //move in same direction as last time
+                    //Move(lastInputDirection); //move in same direction as last time
+                    
+                    if (!Move(lastInputDirection))//
+                    {
+                        Debug.Log("secondStarMoveFailed = true");
+                        secondStarMoveFailed = true; // HAPPENS TOO LATE FOR WATER COLLIDER
+                    }
+                    
                 }
                 else
                 {
@@ -121,7 +131,7 @@ public class PlayerManager : MonoBehaviour
                         }
                         isMakingMove = true;
                         nonpersistentSoundSource.PlayOneShot(grassSound);
-                        lastDirection = moveDirection;
+                        lastInputDirection = moveDirection;
                     }
                     //}
                 }
@@ -157,7 +167,6 @@ public class PlayerManager : MonoBehaviour
                     isMovingInWater = false; //finishedMovingInWater = true;
                 }
             }
-            
         }
     }
 
@@ -183,6 +192,7 @@ public class PlayerManager : MonoBehaviour
         if (boxMoved && !Physics2D.OverlapCircle(movePoint.position + changeInPosition, .2f, stopsMovementLayer))
         {
             movePoint.position += changeInPosition;
+            lastGeneralDirection = changeInPosition;//
             return true;
         }
         return false;
@@ -208,7 +218,7 @@ public class PlayerManager : MonoBehaviour
 
                 nonpersistentSoundSource.PlayOneShot(hurtSound);
                 //Move(new Vector3(horizontalInput * (-1.5f), verticalInput * (-1.5f), 0));
-                Move(-lastDirection);
+                Move(-lastGeneralDirection);//Move(-lastDirection)
                 hasStar = false;
                 isFirstStarMove = false;
                 undoScript.currentState.starWasLost = true;
@@ -236,7 +246,8 @@ public class PlayerManager : MonoBehaviour
             collision.gameObject.SetActive(false);
             undoScript.currentState.lastCandy = collision.gameObject;
             nonpersistentSoundSource.PlayOneShot(candySound);
-            candy++;
+            //candy++;
+            uiScript.UpdateScoreText(++candy); // ++ before candy means that candy is updated before it is given to UpdateScoreText method
         } else if (collision.gameObject.CompareTag("Star"))
         {
             collision.gameObject.SetActive(false);
@@ -257,8 +268,15 @@ public class PlayerManager : MonoBehaviour
             playerSpriteRenderer.enabled = false;
         }
         //finishedMovingInWater
-        if (!isSpikeMove && !isMovingInWater && isMakingMove && (!isFirstStarMove || Physics2D.OverlapCircle(movePoint.position + lastDirection, .2f, stopsMovementLayer)))
+        //if (!isFirstStarMove)
+        //if (!isSpikeMove && !isMovingInWater && isMakingMove && !hasStar)
+        if (!isSpikeMove && !isMovingInWater && isMakingMove && (!isFirstStarMove || Physics2D.OverlapCircle(movePoint.position + lastInputDirection, .2f, stopsMovementLayer) || secondStarMoveFailed)) // NOT: stopsMovementLayer | boxLayer
         {
+            /*
+            Debug.Log("!isFirstStarMove");
+            TryStartWaterMove();
+            */
+
             if (collision.gameObject.CompareTag("WaterDown"))
             {
                 verticalInput = -1f;
@@ -287,6 +305,48 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    /*
+    void TryStartWaterMove()
+    {
+        if (isSpikeMove || isMovingInWater || !isMakingMove)
+            return;
+        Debug.Log("isSpikeMove || isMovingInWater || !isMakingMove");
+        Collider2D waterCollider = Physics2D.OverlapCircle(transform.position, .2f, waterLayer);
+
+        if (waterCollider == null)
+            return;
+        Debug.Log("waterCollider != null");
+        if (waterCollider.CompareTag("WaterDown"))
+        {
+            verticalInput = -1f;
+            horizontalInput = 0f;
+        }
+        else if (waterCollider.CompareTag("WaterUp"))
+        {
+            verticalInput = 1f;
+            horizontalInput = 0f;
+        }
+        else if (waterCollider.CompareTag("WaterLeft"))
+        {
+            verticalInput = 0f;
+            horizontalInput = -1f;
+        }
+        else if (waterCollider.CompareTag("WaterRight"))
+        {
+            verticalInput = 0f;
+            horizontalInput = 1f;
+        }
+        else
+        {
+            Debug.Log("no water collider tag");
+            return;
+        }
+
+        isMovingInWater = true;
+        waterCoroutine = StartCoroutine(WaterMove(new Vector3(horizontalInput * 1.5f, verticalInput * 1.5f, 0)));
+    }
+    */
+
     IEnumerator WaterMove(Vector3 waterChangeInPosition)
     {
         yield return new WaitForSeconds(0.1f);
@@ -301,5 +361,10 @@ public class PlayerManager : MonoBehaviour
     {
         isPlaying = isActive;
         //playerCollider.enabled = isActive;
+    }
+
+    public void DecrementCandy()
+    {
+        uiScript.UpdateScoreText(--candy);
     }
 }

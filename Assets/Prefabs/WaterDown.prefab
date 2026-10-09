@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 420540789075352106}
   - component: {fileID: -5369813121397072374}
   - component: {fileID: -4838336249547184}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: WaterDown
   m_TagString: WaterDown
   m_Icon: {fileID: 0}

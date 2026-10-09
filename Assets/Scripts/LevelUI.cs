@@ -20,7 +20,8 @@ public class LevelUI : MonoBehaviour
     [SerializeField] Toggle restartConfirmSettingsToggle, doNotRestartConfirmToggle;
     [SerializeField] PlayerManager playerScript;
     [SerializeField] UndoManager undoScript;
-    
+    [SerializeField] Animator textGrowAnimator;
+
     public bool died, won, isPlaying; //movedAfterUndo
     public string sceneName;
 
@@ -142,11 +143,12 @@ public class LevelUI : MonoBehaviour
         {
             NextLevel();
         }
-
+        /*
         currentScore = playerScript.candy;
         scoreTextArr[0].text = currentScore.ToString() + "/5";
         scoreTextArr[1].text = currentScore.ToString() + "/5 candies";
         scoreTextArr[2].text = currentScore.ToString() + "/5 candies";
+        */
         if (isPlaying)
         {
             currentTime += Time.deltaTime;
@@ -450,5 +452,14 @@ public class LevelUI : MonoBehaviour
             //Screen.fullScreen = true;
         }
         hasChangedSettings = true;
+    }
+
+    public void UpdateScoreText(int score)
+    {
+        currentScore = score;
+        scoreTextArr[0].text = currentScore.ToString() + "/5";
+        scoreTextArr[1].text = currentScore.ToString() + "/5 candies";
+        scoreTextArr[2].text = currentScore.ToString() + "/5 candies";
+        textGrowAnimator.Play("TextPulse");
     }
 }
