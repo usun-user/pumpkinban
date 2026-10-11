@@ -122,6 +122,7 @@ public class CosmeticManager : MonoBehaviour
         {
             previousToggle.SetIsOnWithoutNotify(false);
         }
+        BadgeManager.Instance.WinBadge(6);
     }
 
     private void ClearItem(Image cosmeticItem, SpriteRenderer playerCosmeticItem, Toggle currentToggle)

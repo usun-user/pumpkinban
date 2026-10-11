@@ -9,15 +9,16 @@ public class DataManager : MonoBehaviour
     // global singleton that any script can access by saying "DataManager.Instance.MyMethod()"
     public static DataManager Instance;
 
-    public int numberOfLevels;
-
+    public int numberOfLevels, levelsWon, candiesWon;
     public bool isTimer, isMusicMute, isSoundMute, isOnMobile, doNotShowConfirm, firstTimePlaying;
     public float musicVolume, soundVolume;
     public int[] scoreArr;
+    public bool[] badgeArr;
     public float[] timeAnyArr, timeHundredArr;
 
     private void Awake()
     {
+        //PlayerPrefs.DeleteAll();//THIS IS ONLY FOR TESTING!
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -34,6 +35,8 @@ public class DataManager : MonoBehaviour
             doNotShowConfirm = (PlayerPrefs.GetInt("doNotShowConfirm") == 1);
             musicVolume = PlayerPrefs.GetFloat("musicVolume");
             soundVolume = PlayerPrefs.GetFloat("soundVolume");
+            //levelsWon = PlayerPrefs.GetInt("levelsWon");
+            //candiesWon = PlayerPrefs.GetInt("candiesWon");
         } else
         {
             firstTimePlaying = true;
@@ -44,15 +47,20 @@ public class DataManager : MonoBehaviour
             PlayerPrefs.SetFloat("musicVolume", 0.5f);
             PlayerPrefs.SetFloat("soundVolume", 0.5f);
             PlayerPrefs.SetFloat("levelSelectPos", 0f);
+            //PlayerPrefs.SetInt("levelsWon", 0);
+            //PlayerPrefs.SetInt("candiesWon", 0);
         }
         for (int i = 0; i < numberOfLevels; i++)
         {
             string levelIndex = i.ToString();
             if (PlayerPrefs.HasKey("score" + levelIndex))
             {
-                scoreArr[i] = PlayerPrefs.GetInt("score" + levelIndex);
+                int thisScore = PlayerPrefs.GetInt("score" + levelIndex);
+                scoreArr[i] = thisScore;
+                candiesWon += thisScore;
                 timeAnyArr[i] = PlayerPrefs.GetFloat("timeAny" + levelIndex);
                 timeHundredArr[i] = PlayerPrefs.GetFloat("timeHundred" + levelIndex);
+                levelsWon++;
             } else
             {
                 PlayerPrefs.SetInt("score" + levelIndex, 0);
@@ -60,18 +68,71 @@ public class DataManager : MonoBehaviour
                 PlayerPrefs.SetFloat("timeHundred" + levelIndex, 3599);
             }
         }
+        for (int i = 0; i < badgeArr.Length; i++)
+        {
+            if (PlayerPrefs.HasKey("badge" + i))
+            {
+                badgeArr[i] = true;
+            }
+        }
         PlayerPrefs.Save();
     }
     
-    public void SaveLevel()
+    public void SaveLevel(int levelIndex, int currentScore, float currentTime)
     {
-        for (int i = 0; i < numberOfLevels; i++)
+        string levelIndexName = levelIndex.ToString();
+
+        int previousScore = scoreArr[levelIndex];
+        if (currentScore > previousScore)
         {
-            string levelIndex = i.ToString();
-            PlayerPrefs.SetInt("score" + levelIndex, scoreArr[i]);
-            PlayerPrefs.SetFloat("timeAny" + levelIndex, timeAnyArr[i]);
-            PlayerPrefs.SetFloat("timeHundred" + levelIndex, timeHundredArr[i]);
+            candiesWon += currentScore - previousScore;
+            if (candiesWon >= 10)
+            {
+                BadgeManager.Instance.WinBadge(3);
+                if (candiesWon >= 25)
+                {
+                    BadgeManager.Instance.WinBadge(4);
+                    if (candiesWon >= 75)
+                    {
+                        BadgeManager.Instance.WinBadge(5);
+                    }
+                }
+            }
+
+            scoreArr[levelIndex] = currentScore;
+            PlayerPrefs.SetInt("score" + levelIndexName, currentScore);
         }
+
+        float previousAnyTime = timeAnyArr[levelIndex];
+        if (previousAnyTime == 3599 && currentTime != 3599)
+        {
+            levelsWon++;
+            BadgeManager.Instance.WinBadge(0);
+            if (levelsWon >= 5)
+            {
+                BadgeManager.Instance.WinBadge(1);
+                if (levelsWon >= 15)
+                {
+                    BadgeManager.Instance.WinBadge(2);
+                }
+            }
+        }
+
+        if (currentTime < previousAnyTime)
+        {
+            timeAnyArr[levelIndex] = currentTime;
+            PlayerPrefs.SetFloat("timeAny" + levelIndexName, currentTime);
+        }
+        if (currentScore == 5 && currentTime < timeHundredArr[levelIndex]) // NOT else if
+        {
+            timeHundredArr[levelIndex] = currentTime;
+            PlayerPrefs.SetFloat("timeHundred" + levelIndexName, currentTime);
+        }
+
+        //PlayerPrefs.SetInt("score" + levelIndexName, scoreArr[levelIndex]);
+        //PlayerPrefs.SetFloat("timeAny" + levelIndexName, timeAnyArr[levelIndex]);
+        //PlayerPrefs.SetFloat("timeHundred" + levelIndexName, timeHundredArr[levelIndex]);
+
         PlayerPrefs.Save();
     }
 
@@ -122,6 +183,13 @@ public class DataManager : MonoBehaviour
     public void SaveRestartConfirm()
     {
         PlayerPrefs.SetInt("doNotShowConfirm", Convert.ToInt32(doNotShowConfirm));
+        PlayerPrefs.Save();
+    }
+
+    public void SaveBadge(int badgeId)
+    {
+        badgeArr[badgeId] = true;
+        PlayerPrefs.SetInt("badge" + badgeId, 1);
         PlayerPrefs.Save();
     }
 

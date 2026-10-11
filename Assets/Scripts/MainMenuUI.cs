@@ -16,10 +16,11 @@ public class MainMenuUI : MonoBehaviour
     // "#" (hash symbol) starts a preprocessor directive, meaning it tells the C# compiler to make a decision before compiling the code
     // In this case it means "Only include this code (b/w the #) if we're building for WebGL and we are not running in the Unity Editor (or else the JavaScript mobile detection causes issues)"
 
-    [SerializeField] GameObject currentPanel, currentSubPanel, settingsPanel, levelPanel, cosmeticPanel, soundButton, musicButton, timerButton, quitButton, mainMenuBG, cosmeticReturnButton, cosmeticSubReturnButton;
-    [SerializeField] TextMeshProUGUI[] scoreTextArr, timerAnyTextArr, timerHundredTextArr;
+    [SerializeField] GameObject currentPanel, currentSubPanel, settingsPanel, levelPanel, cosmeticPanel, soundButton, musicButton, timerButton, mobileButton, quitButton, mainMenuBG, cosmeticReturnButton, cosmeticSubReturnButton;
+    [SerializeField] GameObject[] badgeLockOverlayArr;
     [SerializeField] TextMeshProUGUI timerToggleText, mobileToggleText;
-    [SerializeField] Sprite soundOnSprite, soundOffSprite, musicOnSprite, musicOffSprite, timerOnSprite, timerOffSprite;
+    [SerializeField] TextMeshProUGUI[] scoreTextArr, timerAnyTextArr, timerHundredTextArr;
+    [SerializeField] Sprite soundOnSprite, soundOffSprite, musicOnSprite, musicOffSprite, timerOnSprite, timerOffSprite, mobileOnSprite, mobileOffSprite;
     [SerializeField] AudioClip buttonSound;
     [SerializeField] Slider soundSlider, musicSlider;
     [SerializeField] ScrollRect levelSelectScrollRect;
@@ -122,6 +123,12 @@ public class MainMenuUI : MonoBehaviour
             }
         }
 
+        int badgeArrLength = badgeLockOverlayArr.Length;
+        for (int i = 0; i < badgeArrLength; i++)
+        {
+            badgeLockOverlayArr[i].SetActive(!DataManager.Instance.badgeArr[i]);
+        }
+
         /*
         //Application.platform == RuntimePlatform.IPhonePlayer <--- is not useful
         //Input.touchSupported <--- causes laptop to also be detected as mobile
@@ -152,10 +159,12 @@ public class MainMenuUI : MonoBehaviour
         if (DataManager.Instance.isOnMobile)
         {
             mobileToggleText.text = "Mobile: on";
+            mobileButton.GetComponent<Image>().sprite = mobileOnSprite;
         }
         else
         {
             mobileToggleText.text = "Mobile: off";
+            mobileButton.GetComponent<Image>().sprite = mobileOffSprite;
         }
 
 
@@ -351,10 +360,12 @@ public class MainMenuUI : MonoBehaviour
         if (DataManager.Instance.isOnMobile)
         {
             mobileToggleText.text = "Mobile: on";
+            mobileButton.GetComponent<Image>().sprite = mobileOnSprite;
             //Screen.fullScreen = true;
         } else
         {
             mobileToggleText.text = "Mobile: off";
+            mobileButton.GetComponent<Image>().sprite = mobileOffSprite;
         }
         DataManager.Instance.SaveMobileState();
     }

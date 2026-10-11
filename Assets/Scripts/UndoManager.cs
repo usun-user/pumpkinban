@@ -134,7 +134,8 @@ public class UndoManager : MonoBehaviour
             playerScript.hasStar = true;
             playerScript.isFirstStarMove = false;
             playerScript.playerAnimator.enabled = false;
-            playerScript.playerSpriteRenderer.sprite = playerScript.starPlayerSprite;
+            playerScript.SetStarFace();
+            //playerScript.playerSpriteRenderer.sprite = playerScript.starPlayerSprite;
             GameManager.Instance.FadeInYellowVignette();
         }
 
@@ -157,7 +158,8 @@ public class UndoManager : MonoBehaviour
         playerScript.enabled = true;
         */
         playerScript.SetPlayerActive(true);
-        playerScript.playerSpriteRenderer.enabled = true;
+        playerScript.SetPlayerVisibility(true);
+        //playerScript.playerSpriteRenderer.enabled = true;
         uiScript.isPlaying = true;
 
         //movedAfterUndo = false;

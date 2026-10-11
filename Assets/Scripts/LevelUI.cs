@@ -95,7 +95,11 @@ public class LevelUI : MonoBehaviour
             }
             timerButton.GetComponent<Image>().sprite = timerOnSprite;
         }
-
+        //
+        scoreTextArr[0].text = "0/5";
+        scoreTextArr[1].text = "0/5 candies";
+        scoreTextArr[2].text = "0/5 candies";
+        //
         if (DataManager.Instance.isOnMobile)
         {
             mobilePanel.SetActive(true);
@@ -188,17 +192,17 @@ public class LevelUI : MonoBehaviour
         levelMusicSource.Pause();
         //levelIndex = sceneName[sceneName.Length - 1] - '0' - 1;
         levelIndex = int.Parse(sceneName.Substring(5)) - 1; // reads number after "Level", which is 5 characters
-
+        /*
         if (currentScore > DataManager.Instance.scoreArr[levelIndex])
         {
             DataManager.Instance.scoreArr[levelIndex] = currentScore;
         }
-        /*
-        if (currentTime < DataManager.Instance.timeArr[levelIndex])
-        {
-            DataManager.Instance.timeArr[levelIndex] = currentTime;
-        }
-        */
+        
+        //if (currentTime < DataManager.Instance.timeArr[levelIndex])
+        //{
+        //    DataManager.Instance.timeArr[levelIndex] = currentTime;
+        //}
+        
         if (currentScore == 5 && currentTime < DataManager.Instance.timeHundredArr[levelIndex])
         {
             DataManager.Instance.timeHundredArr[levelIndex] = currentTime;
@@ -207,7 +211,8 @@ public class LevelUI : MonoBehaviour
         {
             DataManager.Instance.timeAnyArr[levelIndex] = currentTime;
         }
-        DataManager.Instance.SaveLevel();
+        */
+        DataManager.Instance.SaveLevel(levelIndex, currentScore, currentTime);
 
         if (levelIndex + 1 == DataManager.Instance.numberOfLevels)
         {

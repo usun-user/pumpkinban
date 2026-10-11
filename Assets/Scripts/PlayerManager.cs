@@ -8,18 +8,18 @@ public class PlayerManager : MonoBehaviour
 {
     [SerializeField] float moveSpeed;
     [SerializeField] LayerMask stopsMovementLayer, boxLayer; //waterLayer //water layer is new
-    [SerializeField] AudioSource nonpersistentSoundSource;
+    [SerializeField] AudioSource nonpersistentSoundSource, levelMusicSource;
     [SerializeField] AudioClip candySound, grassSound, waterSound, gameOverSound, winSound, starSound, hurtSound;
     //[SerializeField] BoxCollider2D playerCollider;
     [SerializeField] LevelUI uiScript;
     [SerializeField] UndoManager undoScript;
+    [SerializeField] Sprite starPlayerSprite; //don't need normalPlayerSprite bc animator automatically shows normalPlayerSprite
+    [SerializeField] SpriteRenderer playerSpriteRenderer, hatRenderer, faceRenderer, bodyRenderer;
 
     public Transform movePoint;
     public bool isMovingInWater, isMakingMove, isFirstStarMove, hasStar;
     //public int candy;
     public float horizontalInput, verticalInput, mobileHorizontalInput, mobileVerticalInput; //1 = right/up, -1 = left/down
-    public Sprite starPlayerSprite; //don't need normalPlayerSprite bc animator automatically shows normalPlayerSprite
-    public SpriteRenderer playerSpriteRenderer;
     public Animator playerAnimator;
 
     Vector3 lastInputDirection, lastGeneralDirection;
@@ -47,7 +47,8 @@ public class PlayerManager : MonoBehaviour
         mobileHorizontalInput = 0f;
         mobileVerticalInput = 0f;
         playerAnimator.enabled = true;
-        playerSpriteRenderer.enabled = true;
+        SetPlayerVisibility(true);
+        //playerSpriteRenderer.enabled = true;
 
         if (waterCoroutine != null)
         {
@@ -239,7 +240,8 @@ public class PlayerManager : MonoBehaviour
                 verticalInput = 0f;
                 //gameObject.SetActive(false);
                 SetPlayerActive(false);
-                playerSpriteRenderer.enabled = false;
+                SetPlayerVisibility(false);
+                //playerSpriteRenderer.enabled = false;
             }
         } else if (collision.gameObject.CompareTag("Candy"))
         {
@@ -265,8 +267,19 @@ public class PlayerManager : MonoBehaviour
             uiScript.ToggleWinPanel();
             //gameObject.SetActive(false);
             SetPlayerActive(false);
-            playerSpriteRenderer.enabled = false;
+            SetPlayerVisibility(false);
+            //playerSpriteRenderer.enabled = false;
         }
+        
+        if (collision.gameObject.CompareTag("InSecret"))
+        {
+            levelMusicSource.Pause();
+            BadgeManager.Instance.WinBadge(7);
+        } else if (collision.gameObject.CompareTag("OutSecret"))
+        {
+            levelMusicSource.UnPause();
+        }
+
         //finishedMovingInWater
         //if (!isFirstStarMove)
         //if (!isSpikeMove && !isMovingInWater && isMakingMove && !hasStar)
@@ -281,19 +294,23 @@ public class PlayerManager : MonoBehaviour
             {
                 verticalInput = -1f;
                 horizontalInput = 0f;
-            } else if (collision.gameObject.CompareTag("WaterUp"))
+            }
+            else if (collision.gameObject.CompareTag("WaterUp"))
             {
                 verticalInput = 1f;
                 horizontalInput = 0f;
-            } else if (collision.gameObject.CompareTag("WaterLeft"))
+            }
+            else if (collision.gameObject.CompareTag("WaterLeft"))
             {
                 verticalInput = 0f;
                 horizontalInput = -1f;
-            } else if (collision.gameObject.CompareTag("WaterRight"))
+            }
+            else if (collision.gameObject.CompareTag("WaterRight"))
             {
                 verticalInput = 0f;
                 horizontalInput = 1f;
-            } else
+            }
+            else
             {
                 return;
             }
@@ -361,6 +378,19 @@ public class PlayerManager : MonoBehaviour
     {
         isPlaying = isActive;
         //playerCollider.enabled = isActive;
+    }
+
+    public void SetPlayerVisibility(bool isActive)
+    {
+        playerSpriteRenderer.enabled = isActive;
+        hatRenderer.enabled = isActive;
+        faceRenderer.enabled = isActive;
+        bodyRenderer.enabled = isActive;
+    }
+
+    public void SetStarFace()
+    {
+        playerSpriteRenderer.sprite = starPlayerSprite;
     }
 
     public void DecrementCandy()
