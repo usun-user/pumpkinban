@@ -16,15 +16,13 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] SpriteRenderer playerSpriteRenderer, hatRenderer, faceRenderer, bodyRenderer;
 
     public Transform movePoint;
-    public bool isMovingInWater, isMakingMove, isFirstStarMove, hasStar;
+    public bool isMovingInWater, isMakingMove, isFirstStarMove, hasStar, isVerticalWater;
     public float horizontalInput, verticalInput, mobileHorizontalInput, mobileVerticalInput; //1 = right/up, -1 = left/down
     public Animator playerAnimator;
 
     Vector3 lastInputDirection, lastGeneralDirection, pendingWaterDirection;
     bool isPlaying, isSpikeMove, pendingWaterPush, waterMoveStarted; //isSpikeMove is needed to prevent extra water push after spike bounce
     int candy;
-
-    Coroutine waterCoroutine;
 
     void Start()
     {
@@ -48,13 +46,6 @@ public class PlayerManager : MonoBehaviour
         mobileVerticalInput = 0f;
         playerAnimator.enabled = true;
         SetPlayerVisibility(true);
-
-        if (waterCoroutine != null)
-        {
-            StopCoroutine(waterCoroutine);
-            waterCoroutine = null;
-        }
-
         SetPlayerActive(true);
     }
 
@@ -155,7 +146,7 @@ public class PlayerManager : MonoBehaviour
             }
         } else if (waterMoveStarted)
         {
-           if (verticalInput != 0)
+           if (isVerticalWater)
             {
                 if (transform.position.x != movePoint.position.x)
                 {
@@ -226,11 +217,6 @@ public class PlayerManager : MonoBehaviour
         {
             if (hasStar)
             {
-                if (waterCoroutine != null)
-                {
-                    StopCoroutine(waterCoroutine);
-                    waterCoroutine = null;
-                }
                 isMovingInWater = false;
                 waterMoveStarted = false;
                 pendingWaterPush = false;
@@ -340,26 +326,11 @@ public class PlayerManager : MonoBehaviour
         isMovingInWater = true;
         waterMoveStarted = false;
         isFirstStarMove = false;
-
-        horizontalInput = Mathf.Sign(direction.x);
-        verticalInput = Mathf.Sign(direction.y);
-
-        waterCoroutine = StartCoroutine(WaterMove(direction));
-    }
-
-    IEnumerator WaterMove(Vector3 waterChangeInPosition)
-    {
         pendingWaterPush = false;
 
-        if (isSpikeMove || !isMakingMove)
-        {
-            isMovingInWater = false;
-            waterMoveStarted = false;
-            waterCoroutine = null;
-            yield break;
-        }
+        isVerticalWater = direction.y != 0;
 
-        if (Move(waterChangeInPosition))
+        if (Move(direction))
         {
             waterMoveStarted = true;
             nonpersistentSoundSource.PlayOneShot(waterSound);
@@ -369,9 +340,6 @@ public class PlayerManager : MonoBehaviour
             isMovingInWater = false;
             waterMoveStarted = false;
         }
-
-        waterCoroutine = null;
-        yield break;
     }
 
     public void SetPlayerActive(bool isActive)
