@@ -88,6 +88,9 @@ public class UndoManager : MonoBehaviour
         playerScript.SetPlayerActive(false);
         uiScript.isPlaying = false;
 
+        //playerScript.pendingWaterPush = false; //!!!
+        //playerScript.pendingWaterDirection = Vector3.zero; //!!!
+
         if (uiScript.won || uiScript.died)
         {
             uiScript.won = false;

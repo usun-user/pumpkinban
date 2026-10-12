@@ -17,7 +17,6 @@ public class MainMenuUI : MonoBehaviour
     // In this case it means "Only include this code (b/w the #) if we're building for WebGL and we are not running in the Unity Editor (or else the JavaScript mobile detection causes issues)"
 
     [SerializeField] GameObject currentPanel, currentSubPanel, settingsPanel, levelPanel, cosmeticPanel, soundButton, musicButton, timerButton, mobileButton, quitButton, mainMenuBG, cosmeticReturnButton, cosmeticSubReturnButton;
-    [SerializeField] GameObject[] badgeLockOverlayArr;
     [SerializeField] TextMeshProUGUI timerToggleText, mobileToggleText;
     [SerializeField] TextMeshProUGUI[] scoreTextArr, timerAnyTextArr, timerHundredTextArr;
     [SerializeField] Sprite soundOnSprite, soundOffSprite, musicOnSprite, musicOffSprite, timerOnSprite, timerOffSprite, mobileOnSprite, mobileOffSprite;
@@ -30,6 +29,8 @@ public class MainMenuUI : MonoBehaviour
     AudioSource persistentSoundSource, nonpersistentSoundSource, mainMenuMusicSource, levelMusicSource;
     GameObject previousPanel, previousSubPanel;
     bool hasChangedSettings;
+
+    public GameObject[] badgeLockOverlayArr;
 
     private bool DetectMobileDevice()
     {

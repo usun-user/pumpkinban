@@ -9,6 +9,7 @@ public class CosmeticManager : MonoBehaviour
     [SerializeField] Image hat, face, body;
     [SerializeField] Sprite[] hatSprites, faceSprites, bodySprites;
     [SerializeField] Toggle[] hatToggles, faceToggles, bodyToggles;
+    [SerializeField] MainMenuUI uiScript;
 
     public bool hasChangedCosmetics;
 
@@ -122,7 +123,10 @@ public class CosmeticManager : MonoBehaviour
         {
             previousToggle.SetIsOnWithoutNotify(false);
         }
-        BadgeManager.Instance.WinBadge(6);
+        if (BadgeManager.Instance.WinBadge(9))
+        {
+            uiScript.badgeLockOverlayArr[9].SetActive(false);
+        }
     }
 
     private void ClearItem(Image cosmeticItem, SpriteRenderer playerCosmeticItem, Toggle currentToggle)

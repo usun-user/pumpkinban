@@ -10,7 +10,7 @@ using System;
 public class LevelUI : MonoBehaviour
 {
     [SerializeField] GameObject originalPanel, deathPanel, winPanel, settingsPanel, infoPanel, mobilePanel, restartConfirmPanel, restartConfirmBG;
-    [SerializeField] GameObject player, soundButton, musicButton, timerButton, mobileButton, infoButton, yellowVignetteObj, nextLevelButton;
+    [SerializeField] GameObject player, soundButton, musicButton, timerButton, mobileButton, infoButton, yellowVignetteObj, winNormalButtons, winFinalLevelButtons;
     [SerializeField] TextMeshProUGUI[] scoreTextArr, timerTextArr;
     [SerializeField] TextMeshProUGUI timerToggleText;
     [SerializeField] Sprite soundOnSprite, soundOffSprite, musicOnSprite, musicOffSprite, timerOnSprite, timerOffSprite, mobileOnSprite, mobileOffSprite;
@@ -216,10 +216,13 @@ public class LevelUI : MonoBehaviour
 
         if (levelIndex + 1 == DataManager.Instance.numberOfLevels)
         {
-            nextLevelButton.SetActive(false);
+            winNormalButtons.SetActive(false);
+            winFinalLevelButtons.SetActive(true);
         } else
         {
-            nextLevelButton.SetActive(true);
+            winFinalLevelButtons.SetActive(false);
+            winNormalButtons.SetActive(true);
+
         }
 
         originalPanel.SetActive(false);

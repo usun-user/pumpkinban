@@ -26,9 +26,9 @@ TagManager:
   - Wall
   - Box
   - Web
-  - 
-  - 
-  - 
+  - WebLevel
+  - WaterLevel
+  - StarLevel
   - 
   - 
   - 

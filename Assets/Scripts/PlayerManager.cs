@@ -7,10 +7,9 @@ using UnityEngine.Audio;
 public class PlayerManager : MonoBehaviour
 {
     [SerializeField] float moveSpeed;
-    [SerializeField] LayerMask stopsMovementLayer, boxLayer; //waterLayer //water layer is new
+    [SerializeField] LayerMask stopsMovementLayer, boxLayer, webBadgeLevelLayer, waterBadgeLevelLayer, starBadgeLevelLayer;
     [SerializeField] AudioSource nonpersistentSoundSource, levelMusicSource;
     [SerializeField] AudioClip candySound, grassSound, waterSound, gameOverSound, winSound, starSound, hurtSound;
-    //[SerializeField] BoxCollider2D playerCollider;
     [SerializeField] LevelUI uiScript;
     [SerializeField] UndoManager undoScript;
     [SerializeField] Sprite starPlayerSprite; //don't need normalPlayerSprite bc animator automatically shows normalPlayerSprite
@@ -18,12 +17,11 @@ public class PlayerManager : MonoBehaviour
 
     public Transform movePoint;
     public bool isMovingInWater, isMakingMove, isFirstStarMove, hasStar;
-    //public int candy;
     public float horizontalInput, verticalInput, mobileHorizontalInput, mobileVerticalInput; //1 = right/up, -1 = left/down
     public Animator playerAnimator;
 
-    Vector3 lastInputDirection, lastGeneralDirection;
-    bool isPlaying, isSpikeMove, secondStarMoveFailed; //isSpikeMove is needed to prevent extra water push after spike bounce
+    Vector3 lastInputDirection, lastGeneralDirection, pendingWaterDirection;
+    bool isPlaying, isSpikeMove, pendingWaterPush, waterMoveStarted; //isSpikeMove is needed to prevent extra water push after spike bounce
     int candy;
 
     Coroutine waterCoroutine;
@@ -35,20 +33,21 @@ public class PlayerManager : MonoBehaviour
 
     public void Setup()
     {
-        isMovingInWater = false; //finishedMovingInWater = true;
+        isMovingInWater = false;
+        waterMoveStarted = false;
+        pendingWaterPush = false;
+        pendingWaterDirection = Vector3.zero;
         isMakingMove = false;
         candy = 0;
         hasStar = false;
         isFirstStarMove = false;
-        isSpikeMove = false;//
-        secondStarMoveFailed = false;//
+        isSpikeMove = false;
         horizontalInput = 0f;
         verticalInput = 0f;
         mobileHorizontalInput = 0f;
         mobileVerticalInput = 0f;
         playerAnimator.enabled = true;
         SetPlayerVisibility(true);
-        //playerSpriteRenderer.enabled = true;
 
         if (waterCoroutine != null)
         {
@@ -64,27 +63,46 @@ public class PlayerManager : MonoBehaviour
         if (!isPlaying)
             return;
 
-        if (!isMovingInWater) //if(finishedMovingInWater)
+        if (!isMovingInWater)
         {
             transform.position = Vector3.MoveTowards(transform.position, movePoint.position, moveSpeed * Time.deltaTime);
             if (Vector3.Distance(transform.position, movePoint.position) <= .05f)
             {
                 transform.position = movePoint.position;
-                secondStarMoveFailed = false;
-
-                if (isSpikeMove) //
+                
+                // start the pending water push only after reaching the tile
+                // let the star-move logic resolve first
+                if (pendingWaterPush && !isFirstStarMove && !isSpikeMove)
                 {
-                    isSpikeMove = false;//
+                    Vector3 direction = pendingWaterDirection;
+                    pendingWaterPush = false;
+
+                    StartWaterPush(direction);
+                    return;
+                }
+
+                if (isSpikeMove)
+                {
+                    isSpikeMove = false;
                 }
                 else if (isFirstStarMove)
                 {
                     isFirstStarMove = false;
-                    //Move(lastInputDirection); //move in same direction as last time
                     
-                    if (!Move(lastInputDirection))//
+                    if (!Move(lastInputDirection))
                     {
-                        Debug.Log("secondStarMoveFailed = true");
-                        secondStarMoveFailed = true; // HAPPENS TOO LATE FOR WATER COLLIDER
+                        if (pendingWaterPush)
+                        {
+                            pendingWaterPush = false;
+
+                            StartWaterPush(pendingWaterDirection);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        // The box was successfully pushed
+                        pendingWaterPush = false;
                     }
                     
                 }
@@ -95,8 +113,7 @@ public class PlayerManager : MonoBehaviour
                         undoScript.SetState();
                         isMakingMove = false;
                     }
-                    //if (uiScript.isPlaying)
-                    //{
+
                     if (!DataManager.Instance.isOnMobile)
                     {
                         horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -134,10 +151,9 @@ public class PlayerManager : MonoBehaviour
                         nonpersistentSoundSource.PlayOneShot(grassSound);
                         lastInputDirection = moveDirection;
                     }
-                    //}
                 }
             }
-        } else
+        } else if (waterMoveStarted)
         {
            if (verticalInput != 0)
             {
@@ -151,7 +167,8 @@ public class PlayerManager : MonoBehaviour
                 }
                 else
                 {
-                    isMovingInWater = false; //finishedMovingInWater = true;
+                    waterMoveStarted = false;
+                    isMovingInWater = false;
                 }
             } else
             {
@@ -165,7 +182,8 @@ public class PlayerManager : MonoBehaviour
                 }
                 else
                 {
-                    isMovingInWater = false; //finishedMovingInWater = true;
+                    waterMoveStarted = false;
+                    isMovingInWater = false;
                 }
             }
         }
@@ -177,7 +195,7 @@ public class PlayerManager : MonoBehaviour
         Collider2D pushableCollider = Physics2D.OverlapCircle(movePoint.position + changeInPosition, .2f, boxLayer);
         if (pushableCollider)
         {
-            if (!isMovingInWater) //finishedMovingInWater
+            if (!isMovingInWater)
             {
                 PushManager pushScript = pushableCollider.GetComponent<PushManager>();
                 boxMoved = pushScript.Push(changeInPosition);
@@ -193,7 +211,7 @@ public class PlayerManager : MonoBehaviour
         if (boxMoved && !Physics2D.OverlapCircle(movePoint.position + changeInPosition, .2f, stopsMovementLayer))
         {
             movePoint.position += changeInPosition;
-            lastGeneralDirection = changeInPosition;//
+            lastGeneralDirection = changeInPosition;
             return true;
         }
         return false;
@@ -213,13 +231,14 @@ public class PlayerManager : MonoBehaviour
                     StopCoroutine(waterCoroutine);
                     waterCoroutine = null;
                 }
-                //finishedMovingInWater = true;
                 isMovingInWater = false;
+                waterMoveStarted = false;
+                pendingWaterPush = false;
+                pendingWaterDirection = Vector3.zero;
                 isSpikeMove = true;
 
                 nonpersistentSoundSource.PlayOneShot(hurtSound);
-                //Move(new Vector3(horizontalInput * (-1.5f), verticalInput * (-1.5f), 0));
-                Move(-lastGeneralDirection);//Move(-lastDirection)
+                Move(-lastGeneralDirection);
                 hasStar = false;
                 isFirstStarMove = false;
                 undoScript.currentState.starWasLost = true;
@@ -238,10 +257,8 @@ public class PlayerManager : MonoBehaviour
                 mobileVerticalInput = 0f;
                 horizontalInput = 0f;
                 verticalInput = 0f;
-                //gameObject.SetActive(false);
                 SetPlayerActive(false);
                 SetPlayerVisibility(false);
-                //playerSpriteRenderer.enabled = false;
             }
         } else if (collision.gameObject.CompareTag("Candy"))
         {
@@ -261,123 +278,105 @@ public class PlayerManager : MonoBehaviour
             GameManager.Instance.FadeInYellowVignette();
         } else if (collision.gameObject.CompareTag("Flag"))
         {
+            if (Physics2D.OverlapCircle(movePoint.position, .2f, webBadgeLevelLayer))
+            {
+                BadgeManager.Instance.WinBadge(6);
+            }
+            if (Physics2D.OverlapCircle(movePoint.position, .2f, waterBadgeLevelLayer))
+            {
+                BadgeManager.Instance.WinBadge(7);
+            }
+            if (Physics2D.OverlapCircle(movePoint.position, .2f, starBadgeLevelLayer))
+            {
+                BadgeManager.Instance.WinBadge(8);
+            }
+
             undoScript.SetState();
             isMakingMove = false;
             nonpersistentSoundSource.PlayOneShot(winSound);
             uiScript.ToggleWinPanel();
-            //gameObject.SetActive(false);
             SetPlayerActive(false);
             SetPlayerVisibility(false);
-            //playerSpriteRenderer.enabled = false;
         }
         
         if (collision.gameObject.CompareTag("InSecret"))
         {
             levelMusicSource.Pause();
-            BadgeManager.Instance.WinBadge(7);
+            BadgeManager.Instance.WinBadge(10);
         } else if (collision.gameObject.CompareTag("OutSecret"))
         {
             levelMusicSource.UnPause();
         }
 
-        //finishedMovingInWater
-        //if (!isFirstStarMove)
-        //if (!isSpikeMove && !isMovingInWater && isMakingMove && !hasStar)
-        if (!isSpikeMove && !isMovingInWater && isMakingMove && (!isFirstStarMove || Physics2D.OverlapCircle(movePoint.position + lastInputDirection, .2f, stopsMovementLayer) || secondStarMoveFailed)) // NOT: stopsMovementLayer | boxLayer
+        bool isWater =
+            collision.CompareTag("WaterDown") ||
+            collision.CompareTag("WaterUp") ||
+            collision.CompareTag("WaterLeft") ||
+            collision.CompareTag("WaterRight");
+
+        if (isWater && !isSpikeMove && !isMovingInWater && isMakingMove)
         {
-            /*
-            Debug.Log("!isFirstStarMove");
-            TryStartWaterMove();
-            */
+            Vector3 direction = Vector3.zero;
 
-            if (collision.gameObject.CompareTag("WaterDown"))
-            {
-                verticalInput = -1f;
-                horizontalInput = 0f;
-            }
-            else if (collision.gameObject.CompareTag("WaterUp"))
-            {
-                verticalInput = 1f;
-                horizontalInput = 0f;
-            }
-            else if (collision.gameObject.CompareTag("WaterLeft"))
-            {
-                verticalInput = 0f;
-                horizontalInput = -1f;
-            }
-            else if (collision.gameObject.CompareTag("WaterRight"))
-            {
-                verticalInput = 0f;
-                horizontalInput = 1f;
-            }
-            else
-            {
-                return;
-            }
+            if (collision.CompareTag("WaterDown"))
+                direction = Vector3.down * 1.5f;
+            else if (collision.CompareTag("WaterUp"))
+                direction = Vector3.up * 1.5f;
+            else if (collision.CompareTag("WaterLeft"))
+                direction = Vector3.left * 1.5f;
+            else if (collision.CompareTag("WaterRight"))
+                direction = Vector3.right * 1.5f;
 
-            //finishedMovingInWater = false;
-            isMovingInWater = true;
-            isFirstStarMove = false;
-            waterCoroutine = StartCoroutine(WaterMove(new Vector3(horizontalInput * 1.5f, verticalInput * 1.5f, 0)));
+            pendingWaterPush = true;
+            pendingWaterDirection = direction;
         }
     }
 
-    /*
-    void TryStartWaterMove()
+    void StartWaterPush(Vector3 direction)
     {
         if (isSpikeMove || isMovingInWater || !isMakingMove)
             return;
-        Debug.Log("isSpikeMove || isMovingInWater || !isMakingMove");
-        Collider2D waterCollider = Physics2D.OverlapCircle(transform.position, .2f, waterLayer);
-
-        if (waterCollider == null)
-            return;
-        Debug.Log("waterCollider != null");
-        if (waterCollider.CompareTag("WaterDown"))
-        {
-            verticalInput = -1f;
-            horizontalInput = 0f;
-        }
-        else if (waterCollider.CompareTag("WaterUp"))
-        {
-            verticalInput = 1f;
-            horizontalInput = 0f;
-        }
-        else if (waterCollider.CompareTag("WaterLeft"))
-        {
-            verticalInput = 0f;
-            horizontalInput = -1f;
-        }
-        else if (waterCollider.CompareTag("WaterRight"))
-        {
-            verticalInput = 0f;
-            horizontalInput = 1f;
-        }
-        else
-        {
-            Debug.Log("no water collider tag");
-            return;
-        }
 
         isMovingInWater = true;
-        waterCoroutine = StartCoroutine(WaterMove(new Vector3(horizontalInput * 1.5f, verticalInput * 1.5f, 0)));
+        waterMoveStarted = false;
+        isFirstStarMove = false;
+
+        horizontalInput = Mathf.Sign(direction.x);
+        verticalInput = Mathf.Sign(direction.y);
+
+        waterCoroutine = StartCoroutine(WaterMove(direction));
     }
-    */
 
     IEnumerator WaterMove(Vector3 waterChangeInPosition)
     {
-        yield return new WaitForSeconds(0.1f);
+        pendingWaterPush = false;
+
+        if (isSpikeMove || !isMakingMove)
+        {
+            isMovingInWater = false;
+            waterMoveStarted = false;
+            waterCoroutine = null;
+            yield break;
+        }
+
         if (Move(waterChangeInPosition))
         {
+            waterMoveStarted = true;
             nonpersistentSoundSource.PlayOneShot(waterSound);
         }
+        else
+        {
+            isMovingInWater = false;
+            waterMoveStarted = false;
+        }
+
         waterCoroutine = null;
+        yield break;
     }
 
     public void SetPlayerActive(bool isActive)
     {
         isPlaying = isActive;
-        //playerCollider.enabled = isActive;
     }
 
     public void SetPlayerVisibility(bool isActive)

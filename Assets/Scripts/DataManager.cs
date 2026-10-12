@@ -58,9 +58,15 @@ public class DataManager : MonoBehaviour
                 int thisScore = PlayerPrefs.GetInt("score" + levelIndex);
                 scoreArr[i] = thisScore;
                 candiesWon += thisScore;
-                timeAnyArr[i] = PlayerPrefs.GetFloat("timeAny" + levelIndex);
+
+                float thisTimeAny = PlayerPrefs.GetFloat("timeAny" + levelIndex);
+                timeAnyArr[i] = thisTimeAny;
                 timeHundredArr[i] = PlayerPrefs.GetFloat("timeHundred" + levelIndex);
-                levelsWon++;
+                
+                if (thisTimeAny != 3599)
+                {
+                    levelsWon++;
+                }
             } else
             {
                 PlayerPrefs.SetInt("score" + levelIndex, 0);
